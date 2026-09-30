@@ -115,6 +115,7 @@ const TOPICS = [
         question: 'COMMISSION?', sub: 'ค่าคอมนับรอบไหน',
         cards: [
           { code: 'LTS', title: "LOTUS'S", rows: [
+            { name: 'ค่าคอมบาส', sub: 'เฉพาะบางสาขา', pill: '1 → สิ้นเดือน' },
             { name: 'ค่าคอมเครดิต', pill: '1 → สิ้นเดือน' } ] },
           { code: 'BGC', title: 'BIG C', rows: [
             { name: 'ค่าคอมบาส', sub: 'สินค้าฝากขาย', pill: '21 → 20', red: true },
@@ -133,10 +134,11 @@ const TOPICS = [
 
       { type: 'timeline',
         question: 'ตัวอย่าง', sub: 'รอบจ่ายวันที่ *1 ต.ค.*',
-        store: "LOTUS'S", pay: '1/10', slipTitle: 'สลิปวันที่ 1 ต.ค.',
+        store: "LOTUS'S", pay: '1/10', axisFrom: '1/7', slipTitle: 'สลิปวันที่ 1 ต.ค.',
         bars: [
           { name: 'เงินเดือน',    from: '21/8', to: '20/9', color: 'dark' },
-          { name: 'ค่าคอมบาส',   from: '21/7', to: '20/8', color: 'red',   missing: "Lotus's ไม่มี" },
+          { name: 'ค่าคอมบาส',   from: '1/8',  to: '31/8', color: 'dashed', badge: 'เฉพาะบางสาขา', optional: '(เฉพาะสาขาที่มี)',
+            caption: 'บางสาขาเท่านั้น · นับรอบ 1–31 เหมือนเครดิต' },
           { name: 'ค่าคอมเครดิต', from: '1/8',  to: '31/8', color: 'hatch', caption: 'ยอดขายทั้งเดือน ส.ค.' },
         ] },
 
@@ -146,7 +148,7 @@ const TOPICS = [
         columns: ["LOTUS'S", '*BIG C*'],
         rows: [
           { name: 'เงินเดือน',    values: ['21 ส.ค. –\n20 ก.ย.', '21 ส.ค. –\n20 ก.ย.'] },
-          { name: 'ค่าคอมบาส',   sub: 'สินค้าฝากขาย', values: ['ไม่มี', '*21 ก.ค. –\n20 ส.ค.*'] },
+          { name: 'ค่าคอมบาส',   sub: 'สินค้าฝากขาย', values: ['1 – 31 ส.ค.\n*เฉพาะบางสาขา*', '*21 ก.ค. –\n20 ส.ค.*'] },
           { name: 'ค่าคอมเครดิต', values: ['1 – 31 ส.ค.', '1 – 31 ส.ค.'] },
           // แถวเงินเบิก: span = ข้อความยาวเต็มสองช่อง, note = บรรทัดเล็กสีเทา, highlight = พื้นชมพู
           { name: '*หักเงินเบิก*', sub: 'ถ้ามีเบิก', span: 'เงินเบิกเข้า *18 ส.ค.*\n→ หักกับค่าคอมรอบนี้',
@@ -170,8 +172,29 @@ const TOPICS = [
     title: 'กฎระเบียบการทำงานบริษัท',
     desc: 'ข้อปฏิบัติและขั้นตอนการทำงาน',
     children: [
-      { id: 'sales', code: 'SAL', title: 'การแจ้งยอดขาย', desc: 'ขั้นตอนส่งยอดขายประจำวัน', ready: false, pages: [] },
-      { id: 'claim', code: 'CLM', title: 'วิธีการแจ้งของเสีย & เปลี่ยนของ', desc: 'ขั้นตอนแจ้งสินค้าเสียและเปลี่ยนสินค้า', ready: false, pages: [] },
+      /* 3.1 การลา (type: 'rules') — stat = ตัวเลขใหญ่, unit = คำใต้ตัวเลข, text = รายละเอียด */
+      { id: 'leave', code: 'LEV', title: 'การลา', desc: 'ลาคลอด · ลาป่วย · ลากิจ · ลาพักผ่อน', ready: true,
+        pages: [
+          { type: 'rules', step: '3.1', title: 'การลา',
+            items: [
+              { tag: 'ลาคลอด',  stat: '120', unit: 'วัน',          text: 'ลาได้สูงสุด *120 วัน* ได้รับค่าจ้างเต็มจำนวนตามวันที่ลา แต่ไม่เกิน *60 วัน*' },
+              { tag: 'ลาป่วย',  stat: '30',  unit: 'วันทำงาน/ปี',   text: 'ลาป่วยได้ตามความจำเป็น แต่ได้รับค่าจ้างสูงสุดไม่เกิน *30 วันทำงานต่อปี*' },
+              { tag: 'ลากิจ',   stat: '3',   unit: 'วันล่วงหน้า',   text: 'ลากิจที่จำเป็นได้ เช่น ไปงานศพญาติ แต่ต้อง *แจ้งเซลล์ล่วงหน้า 3 วัน* ก่อนวันลา' },
+              { tag: 'ลาพักผ่อนประจำปี', stat: '6', unit: 'วัน/ปี', text: 'ลาได้ *6 วันต่อปี* ต้องทำงานมาแล้ว *ไม่น้อยกว่า 1 ปี*' },
+            ],
+            note: 'การลาทุกประเภทต้องได้รับความเห็นชอบจาก *เซลล์ต้นสังกัด* โดยแจ้งความประสงค์ผ่าน *Mobile-TA*' },
+        ] },
+      /* 3.2 การลาออก (type: 'rules') */
+      { id: 'resign', code: 'RSG', title: 'การลาออก', desc: 'แจ้งล่วงหน้า 30 วัน · เช็คสต็อกก่อนออก', ready: true,
+        pages: [
+          { type: 'rules', step: '3.2', title: 'การลาออก',
+            items: [
+              { tag: 'แจ้งลาออก', stat: '30', unit: 'วันล่วงหน้า',
+                text: 'ต้อง *แจ้งเซลล์ต้นสังกัดล่วงหน้า 30 วัน* และ *เขียนใบลาออก* นำส่งบริษัท (เซลล์พิจารณาให้ออกตามวันที่เหมาะสมได้)' },
+              { tag: 'เช็คสต็อกก่อนลาออก', stat: '✓', unit: 'ถ้ามีสินค้าฝากขาย',
+                text: 'ถ้าสาขามี *สินค้าฝากขาย* ต้อง *เช็คสต็อกก่อนลาออก* เพื่อไม่ให้เกิดข้อพิพาทเรื่องหักเงิน เมื่อเช็คเกอร์เข้าเช็คภายหลัง' },
+            ] },
+        ] },
 
       /* 3.3 หน้าลิงก์ (type: 'links') — แก้ลิงก์ที่ url: ได้เลย */
       { id: 'commission', code: 'CMS', title: 'วิธีการสรุปยอดค่าคอมมิชชั่น', desc: "ลิงก์สรุปยอด Big C · Lotus's", ready: true,
@@ -284,6 +307,8 @@ const TOPICS = [
   .bar{position:absolute;height:58px;border:var(--bw) solid var(--ink);transform-origin:left center}
   .bar.dark{background:var(--ink)}
   .bar.red{background:var(--red);border-color:var(--red)}
+  .bar.dashed{background:var(--red-soft);border:4px dashed var(--red)}
+  .box.dashed{border-style:dashed;border-color:var(--red)}
   .bar.hatch{background:repeating-linear-gradient(-45deg,var(--red) 0 7px,var(--red-soft) 7px 18px);border-color:var(--red)}
   .conn{position:absolute;height:0;border-top:3px dashed var(--muted);transform-origin:left center}
   .cap{position:absolute;left:40px;font-size:32px;color:var(--muted);white-space:nowrap}
@@ -508,7 +533,7 @@ function renderCardsPage(page){
 function renderTimelinePage(page, topic){
   const pay = parseDayMonth(page.pay);
   const bars = page.bars.map(b => ({ ...b, fromD: parseDayMonth(b.from), toD: parseDayMonth(b.to) }));
-  const axis = buildMonthAxis([...bars.flatMap(b => [b.fromD, b.toD]), pay], pay.m, 12);
+  const axis = buildMonthAxis([...bars.flatMap(b => [b.fromD, b.toD]), pay, ...(page.axisFrom ? [parseDayMonth(page.axisFrom)] : [])], pay.m, 12);
   const X = d => 40 + 880 * d / axis.totalDays;
   const payX = X(axis.dayStart(pay));
   const chartBottom = 130 + bars.length * 200 + 10;
@@ -540,8 +565,9 @@ function renderTimelinePage(page, topic){
   const slipTickStart = missingTime + (bars.some(b => b.missing) ? 1.4 : 0);
   const slipRows = bars.map((b, i) => `
     <div style="display:flex;align-items:center;gap:24px;position:relative;${b.missing ? 'color:var(--muted)' : ''}">
-      <div class="box">${b.missing ? '' : `<svg class="tick" viewBox="0 0 54 54"><path data-a="tick" data-t="${(slipTickStart + 0.8 + i*0.5).toFixed(1)}" d="M8 28 L22 42 L48 8"/></svg>`}</div>
+      <div class="box ${b.optional ? 'dashed' : ''}">${b.missing || b.optional ? '' : `<svg class="tick" viewBox="0 0 54 54"><path data-a="tick" data-t="${(slipTickStart + 0.8 + i*0.5).toFixed(1)}" d="M8 28 L22 42 L48 8"/></svg>`}</div>
       <span style="position:relative">${formatRichText(b.name)}${b.missing ? `<span class="strike" data-a="grow" data-d="0.45" data-t="${(slipTickStart + 0.8 + i*0.5).toFixed(1)}" style="width:calc(100% + 90px);left:-80px"></span>` : ''}</span>
+      ${b.optional ? `<span class="red" style="font-size:38px;font-weight:600">${formatRichText(b.optional)}</span>` : ''}
       ${b.missing ? `<span class="red" data-a="fade" data-t="${(slipTickStart + 1.2 + i*0.5).toFixed(1)}" style="font-size:40px;font-weight:600;margin-left:16px">${formatRichText(b.missing)}</span>` : ''}
     </div>`).join('');
   return `
@@ -624,7 +650,27 @@ function renderLinksPage(page){
   </div>`;
 }
 
-const PAGE_RENDERERS = { links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
+// หน้ากฎเป็นข้อ ๆ: ตัวเลขเด่นด้านซ้าย + รายละเอียดด้านขวา + หมายเหตุท้ายหน้า
+function renderRulesPage(page){
+  const ruleCards = page.items.map(item => `<div class="card" style="position:relative;width:960px">
+      <div class="hd" style="height:62px"><div class="id">RULE</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0;font-size:34px;font-weight:700">${formatRichText(item.tag)}</div></div>
+      <div style="display:flex;align-items:stretch">
+        <div style="width:220px;flex:none;border-right:var(--bw) solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px">
+          <div style="font-family:var(--mono);font-size:84px;font-weight:700;line-height:1;color:var(--red)">${escapeHtml(item.stat)}</div>
+          <div style="font-size:28px;font-weight:600;text-align:center;margin-top:6px">${formatRichText(item.unit)}</div></div>
+        <div style="flex:1;min-width:0;padding:20px 30px;font-size:38px;line-height:1.35;display:flex;align-items:center"><div>${formatRichText(item.text)}</div></div>
+      </div></div>`).join('');
+  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:4px solid var(--red);background:var(--red-soft);padding:20px 34px">
+      <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red);letter-spacing:2px">สำคัญ</div>
+      <div style="font-size:38px;line-height:1.4;margin-top:4px">${formatRichText(page.note)}</div></div>` : '';
+  return `
+  <div class="card q" style="top:230px;height:190px;gap:0">
+    <div style="font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);letter-spacing:4px">${escapeHtml(page.step)}</div>
+    <div style="font-size:70px;font-weight:700;line-height:1.2">${formatRichText(page.title)}</div></div>
+  <div class="abs" style="left:60px;top:460px;width:960px;display:flex;flex-direction:column;gap:26px">${ruleCards}${noteBox}</div>`;
+}
+
+const PAGE_RENDERERS = { rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
   cards: renderCardsPage, timeline: renderTimelinePage, table: renderTablePage };
 
 /* ================= หน้าสารบัญ ================= */
