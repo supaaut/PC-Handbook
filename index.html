@@ -18,6 +18,7 @@
    ║  • วันที่ เขียนแบบ 'วัน/เดือน' เช่น '21/8' (แถบในกราฟจะขยับตามให้เอง)   ║
    ║  • คำที่มี ' อยู่ข้างใน เช่น Lotus's ให้ใช้ "..." ครอบแทน                ║
    ║  • หัวข้อที่ยังไม่พร้อม ใส่ ready: false → จะขึ้นป้าย "เร็ว ๆ นี้"         ║
+   ║  • หัวข้อย่อย ใส่ไว้ใน children: [ ... ] ของหัวข้อหลัก                   ║
    ╚══════════════════════════════════════════════════════════════════╝ */
 
 const SITE = {
@@ -155,10 +156,18 @@ const TOPICS = [
     ],
   },
 
-  /* ───────── หัวข้อที่ยังไม่พร้อม ───────── */
-  { id: 'rules', code: 'RUL', title: 'กฎระเบียบการทำงานบริษัท', desc: 'ข้อควรรู้และข้อปฏิบัติ', ready: false, pages: [] },
-  { id: 'sales', code: 'SAL', title: 'การแจ้งยอดขาย',          desc: 'ขั้นตอนส่งยอดขายประจำวัน', ready: false, pages: [] },
-  { id: 'claim', code: 'CLM', title: 'วิธีการแจ้งของเสีย & เปลี่ยนของ', desc: 'ขั้นตอนแจ้งสินค้าเสียและเปลี่ยนสินค้า', ready: false, pages: [] },
+  /* ───────── หัวข้อ 3: กฎระเบียบ (หัวข้อหลักที่มีหัวข้อย่อยอยู่ข้างใน) ─────────
+     เพิ่มหัวข้อย่อยได้ใน children: [ ... ] รูปแบบเดียวกับหัวข้ออื่น */
+  {
+    id: 'rules',
+    code: 'RUL',
+    title: 'กฎระเบียบการทำงานบริษัท',
+    desc: 'ข้อปฏิบัติและขั้นตอนการทำงาน',
+    children: [
+      { id: 'sales', code: 'SAL', title: 'การแจ้งยอดขาย', desc: 'ขั้นตอนส่งยอดขายประจำวัน', ready: false, pages: [] },
+      { id: 'claim', code: 'CLM', title: 'วิธีการแจ้งของเสีย & เปลี่ยนของ', desc: 'ขั้นตอนแจ้งสินค้าเสียและเปลี่ยนสินค้า', ready: false, pages: [] },
+    ],
+  },
 ];
 /* ═══════════════════ จบส่วนแก้ข้อความ ═══════════════════ */
 </script>
@@ -547,11 +556,37 @@ const PAGE_RENDERERS = { photo: renderPhotoPage, cover: renderCoverPage, highlig
   cards: renderCardsPage, timeline: renderTimelinePage, table: renderTablePage };
 
 /* ================= หน้าสารบัญ ================= */
-// วาดหน้าสารบัญจากรายการหัวข้อ
+// เช็กว่าหัวข้อมีเนื้อหาพร้อมเปิดหรือยัง
+function isTopicReady(topic){ return !!(topic.ready && topic.pages && topic.pages.length); }
+// รวมหัวข้อที่เปิดอ่านได้ทั้งหมด (รวมหัวข้อย่อย) พร้อมจำหัวข้อแม่
+function listAllTopics(){
+  const allTopics = [];
+  TOPICS.forEach(tp => { if (tp.children) tp.children.forEach(ch => allTopics.push({ ...ch, parent: tp })); else allTopics.push(tp); });
+  return allTopics;
+}
+
+// วาดการ์ดรายการหัวข้อ (ใช้ทั้งหน้าสารบัญและหน้าหัวข้อย่อย)
+function renderTopicCards(topicList, listTop, makeNumberLabel){
+  const rot = [-0.6, 0.5, -0.4, 0.6], topicGap = 30;
+  const topicHeight = Math.min(210, (1880 - listTop - (topicList.length - 1) * topicGap) / topicList.length);
+  return topicList.map((tp, i) => {
+    const isGroup = Array.isArray(tp.children);
+    const soon = !isGroup && !isTopicReady(tp);
+    const label = makeNumberLabel(i);
+    const action = isGroup ? `data-group="${escapeHtml(tp.id)}"` : soon ? 'aria-disabled="true" tabindex="-1"' : `data-go="${escapeHtml(tp.id)}"`;
+    const goText = isGroup ? `${tp.children.length} หัวข้อย่อย · แตะเพื่อเปิด →` : `${(tp.pages || []).length} หน้า · แตะเพื่อเปิด →`;
+    return `<button type="button" class="topic ${soon ? 'soon' : ''}" ${action}
+      style="top:${listTop + i*(topicHeight + topicGap)}px;height:${topicHeight}px;transform:rotate(${rot[i%4]}deg)">
+      <div class="no" style="${label.length > 2 ? 'font-size:56px' : ''}">${escapeHtml(label)}</div>
+      <div class="bd"><div class="tt">${formatRichText(tp.title)}</div>
+        <div class="ds">${formatRichText(tp.desc || '')}</div>
+        ${soon ? '' : `<div class="go">${goText}</div>`}</div>
+      ${soon ? '<div class="soonStamp">เร็ว ๆ นี้</div>' : ''}
+    </button>`; }).join('');
+}
+
+// วาดหน้าสารบัญหลัก
 function renderHomePage(){
-  const rot = [-0.6, 0.5, -0.4, 0.6];
-  const topicsTop = 640, topicGap = 30;
-  const topicHeight = Math.min(210, (1880 - topicsTop - (TOPICS.length - 1) * topicGap) / TOPICS.length);
   return `
   <div class="card" style="left:60px;top:60px;width:960px;height:78px">
     <div class="hd" style="border-bottom:none"><div class="id">${escapeHtml(SITE.code)}</div><div class="ttl">INDEX · สารบัญ</div><div class="tag">${String(TOPICS.length).padStart(2,'0')} หัวข้อ</div></div></div>
@@ -563,16 +598,25 @@ function renderHomePage(){
       <div style="font-size:40px;margin-top:10px;font-weight:600">${formatRichText(SITE.hint)} <span class="red">↓</span></div>
     </div>
   </div>
-  ${TOPICS.map((tp, i) => {
-    const soon = !tp.ready || !tp.pages.length;
-    return `<button type="button" class="topic ${soon ? 'soon' : ''}" ${soon ? 'aria-disabled="true" tabindex="-1"' : `data-go="${escapeHtml(tp.id)}"`}
-      style="top:${topicsTop + i*(topicHeight + topicGap)}px;height:${topicHeight}px;transform:rotate(${rot[i%4]}deg)">
-      <div class="no">${String(i+1).padStart(2,'0')}</div>
-      <div class="bd"><div class="tt">${formatRichText(tp.title)}</div>
-        <div class="ds">${formatRichText(tp.desc || '')}</div>
-        ${soon ? '' : `<div class="go">${tp.pages.length} หน้า · แตะเพื่อเปิด →</div>`}</div>
-      ${soon ? '<div class="soonStamp">เร็ว ๆ นี้</div>' : ''}
-    </button>`; }).join('')}`;
+  ${renderTopicCards(TOPICS, 640, i => String(i + 1).padStart(2, '0'))}`;
+}
+
+// วาดหน้ารายการหัวข้อย่อยของหัวข้อหลัก
+function renderGroupPage(group){
+  const groupNumber = TOPICS.indexOf(group) + 1;
+  return `
+  <div class="card" style="left:60px;top:60px;width:960px;height:78px">
+    <div class="hd" style="border-bottom:none"><div class="id">${escapeHtml(group.code)}</div>
+      <div class="ttl" style="font-family:var(--thai);letter-spacing:0">หัวข้อที่ ${groupNumber}</div>
+      <div class="tag">${String(group.children.length).padStart(2,'0')} หัวข้อย่อย</div></div></div>
+  <div class="card" style="left:60px;top:200px;width:960px;height:370px">
+    <div class="hd"><div class="id">NO.${String(groupNumber).padStart(2,'0')}</div><div class="ttl">SECTION</div></div>
+    <div style="padding:34px 56px 0">
+      <div style="font-size:80px;font-weight:700;line-height:1.15">${formatRichText(group.title)}</div>
+      <div class="muted" style="font-size:40px;margin-top:18px">${formatRichText(group.desc || '')}</div>
+    </div>
+  </div>
+  ${renderTopicCards(group.children, 630, i => `${groupNumber}.${i + 1}`)}`;
 }
 
 /* ================= ตัวสร้างแอนิเมชัน ================= */
@@ -618,17 +662,19 @@ const pageHost = document.getElementById('pageHost');
 const btnHome = document.getElementById('btnHome'), btnPrev = document.getElementById('btnPrev');
 const btnNext = document.getElementById('btnNext'), btnReplay = document.getElementById('btnReplay');
 const counterEl = document.getElementById('counter'), navHint = document.getElementById('navHint'), nextLbl = document.getElementById('nextLbl');
-let currentTopic = null, currentIndex = 0;
+let currentTopic = null, currentIndex = 0, currentGroup = null;
 
 // อ่านตำแหน่งจากลิงก์ เช่น #payroll-3
 function readLocation(){
   const hash = (location.hash || '').replace('#', '');
   const match = hash.match(/^([a-z0-9_]+?)(?:-(\d+))?$/i);
-  if (!match) return { topic: null, index: 0 };
-  const topic = TOPICS.find(tp => tp.id === match[1] && tp.ready && tp.pages.length);
-  if (!topic) return { topic: null, index: 0 };
+  if (!match) return { topic: null, index: 0, group: null };
+  const group = TOPICS.find(tp => tp.id === match[1] && Array.isArray(tp.children));
+  if (group) return { topic: null, index: 0, group };
+  const topic = listAllTopics().find(tp => tp.id === match[1] && isTopicReady(tp));
+  if (!topic) return { topic: null, index: 0, group: null };
   const index = Math.min(Math.max(parseInt(match[2] || '1', 10) - 1, 0), topic.pages.length - 1);
-  return { topic, index };
+  return { topic, index, group: null };
 }
 
 // เปลี่ยนหน้าโดยเขียนลิงก์ใหม่ (ปุ่มย้อนกลับของมือถือใช้ได้)
@@ -637,14 +683,26 @@ function goTo(topicId, index){
   if (location.hash === target || (!topicId && !location.hash)) { showCurrent(); return; }
   location.hash = topicId ? `${topicId}-${index + 1}` : '';
 }
+// เปิดหน้ารายการหัวข้อย่อย
+function goToGroup(groupId){ if (location.hash === `#${groupId}`) { showCurrent(); return; } location.hash = groupId; }
+// กลับหน้าก่อนหน้าในลำดับสารบัญ (หัวข้อย่อย → หัวข้อหลัก → สารบัญ)
+function goToParentList(){ if (currentTopic && currentTopic.parent) goToGroup(currentTopic.parent.id); else goTo(null); }
 
 // แสดงหน้าตามลิงก์ปัจจุบัน
 function showCurrent(){
   closeZoom();
   const loc = readLocation();
-  currentTopic = loc.topic; currentIndex = loc.index;
+  currentTopic = loc.topic; currentIndex = loc.index; currentGroup = loc.group;
   if (currentTimeline) currentTimeline.kill();
   gsap.set('#shake', {x:0, y:0});
+  if (currentGroup){
+    pageHost.innerHTML = renderGroupPage(currentGroup);
+    [btnPrev, btnNext, btnReplay].forEach(b => b.hidden = true);
+    btnHome.hidden = false;
+    counterEl.hidden = true; navHint.hidden = false; navHint.textContent = 'แตะหัวข้อย่อยที่อยากดู';
+    currentTimeline = null;
+    return;
+  }
   if (!currentTopic){
     pageHost.innerHTML = renderHomePage();
     [btnHome, btnPrev, btnNext, btnReplay].forEach(b => b.hidden = true);
@@ -673,16 +731,17 @@ function showCurrent(){
 }
 
 // ไปหน้าถัดไป (หน้าสุดท้าย → กลับสารบัญ)
-function goNext(){ if (!currentTopic) return; if (currentIndex < currentTopic.pages.length - 1) goTo(currentTopic.id, currentIndex + 1); else goTo(null); }
+function goNext(){ if (!currentTopic) return; if (currentIndex < currentTopic.pages.length - 1) goTo(currentTopic.id, currentIndex + 1); else goToParentList(); }
 // ย้อนกลับหนึ่งหน้า
 function goPrev(){ if (currentTopic && currentIndex > 0) goTo(currentTopic.id, currentIndex - 1); }
 
 btnNext.addEventListener('click', goNext);
 btnPrev.addEventListener('click', goPrev);
-btnHome.addEventListener('click', () => goTo(null));
+btnHome.addEventListener('click', () => { if (currentGroup) goTo(null); else goToParentList(); });
 btnReplay.addEventListener('click', () => { if (currentTimeline) currentTimeline.restart(); });
 pageHost.addEventListener('click', e => {
   const zoomBtn = e.target.closest('[data-zoom]'); if (zoomBtn) { openZoom(zoomBtn.dataset.zoom, zoomBtn.getAttribute('aria-label')); return; }
+  const groupBtn = e.target.closest('[data-group]'); if (groupBtn) { goToGroup(groupBtn.dataset.group); return; }
   const btn = e.target.closest('[data-go]'); if (btn) goTo(btn.dataset.go, 0); });
 // เปิดรูปแบบเต็มจอ (เลื่อนดูได้)
 function openZoom(src, label){ const box = document.getElementById('zoom'); document.getElementById('zoomImg').src = src; document.getElementById('zoomImg').alt = label || ''; box.hidden = false; box.scrollTop = 0; document.getElementById('zoomClose').focus(); }
@@ -693,7 +752,7 @@ window.addEventListener('hashchange', showCurrent);
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') goNext();
   else if (e.key === 'ArrowLeft') goPrev();
-  else if (e.key === 'Escape') { if (!document.getElementById('zoom').hidden) closeZoom(); else goTo(null); }
+  else if (e.key === 'Escape') { if (!document.getElementById('zoom').hidden) closeZoom(); else if (currentGroup) goTo(null); else goToParentList(); }
 });
 
 // ปัดซ้าย/ขวาเพื่อเปลี่ยนหน้า
