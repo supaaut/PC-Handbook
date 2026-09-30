@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>คู่มือพนักงาน PC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  ส่วนแก้ข้อความ (CONFIG) — แก้เฉพาะในกล่องนี้ก็พอ                     ║
+   ╠══════════════════════════════════════════════════════════════════╣
+   ║  • แก้ได้เฉพาะข้อความที่อยู่ใน '...' เท่านั้น อย่าลบเครื่องหมาย ' , { } [ ] ║
+   ║  • *ข้อความ*   = ตัวหนาสีแดง                                         ║
+   ║  • \n          = ขึ้นบรรทัดใหม่                                       ║
+   ║  • วันที่ เขียนแบบ 'วัน/เดือน' เช่น '21/8' (แถบในกราฟจะขยับตามให้เอง)   ║
+   ║  • คำที่มี ' อยู่ข้างใน เช่น Lotus's ให้ใช้ "..." ครอบแทน                ║
+   ║  • หัวข้อที่ยังไม่พร้อม ใส่ ready: false → จะขึ้นป้าย "เร็ว ๆ นี้"         ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+const SITE = {
+  code: 'HR-00',
+  title: 'คู่มือพนักงาน PC',
+  company: 'Inanos (Thailand) Co., Ltd.',
+  hint: 'แตะหัวข้อที่อยากดู',
+};
+
+const TOPICS = [
+
+  /* ───────── หัวข้อ 1: รอบจ่ายเงินเดือน ───────── */
+  {
+    id: 'payroll',                       // ชื่อลิงก์ภาษาอังกฤษ (ลิงก์ตรง = .../#payroll)
+    code: 'PAY',
+    title: 'รอบจ่ายเงินเดือน',
+    desc: "เงินเดือน · ค่าคอม Lotus's · ค่าคอม Big C",
+    ready: true,
+    pages: [
+      { type: 'cover',
+        title: 'เงินเดือน &\nค่าคอมมิชชั่น',
+        subtitle: 'สิ่งที่พนักงานต้องรู้',
+        checklist: ['รอบเงินเดือน', "ค่าคอม Lotus's", 'ค่าคอม Big C'] },
+
+      { type: 'highlight',
+        question: 'PAYDAY?', sub: 'เงินเดือนออกวันไหน',
+        calLabel: 'ทุกเดือน', big: '1',
+        line1: 'บริษัทจ่ายเงินเดือน', line2: 'ทุกวันที่ 1 ของเดือน',
+        stamp: ['PAID', 'ทุกวันที่ 1'] },
+
+      { type: 'range',
+        question: 'เงินเดือน', sub: 'นับวันทำงานรอบไหน',
+        cardTitle: 'รอบเงินเดือน', tag: '21 → 20',
+        from: '21/8', to: '20/9', caption: 'นับวันทำงาน',
+        exampleTitle: 'ตัวอย่าง', workText: 'ทำงาน', payText: 'ได้เงินวันที่', pay: '1/10',
+        note: "ใช้รอบเดียวกันทั้ง Lotus's และ Big C" },
+
+      { type: 'cards',
+        question: 'COMMISSION?', sub: 'ค่าคอมนับรอบไหน',
+        cards: [
+          { code: 'LTS', title: "LOTUS'S", rows: [
+            { name: 'ค่าคอมเครดิต', pill: '1 → สิ้นเดือน' } ] },
+          { code: 'BGC', title: 'BIG C', rows: [
+            { name: 'ค่าคอมบาส', sub: 'สินค้าฝากขาย', pill: '21 → 20', red: true },
+            { name: 'ค่าคอมเครดิต', pill: '1 → สิ้นเดือน' } ] },
+        ],
+        callout: ['*Big C มีค่าคอม 2 แบบ*', 'นับรอบไม่เหมือนกัน'] },
+
+      { type: 'timeline',
+        question: 'ตัวอย่าง', sub: 'รอบจ่ายวันที่ *1 ต.ค.*',
+        store: 'BIG C', pay: '1/10', slipTitle: 'สลิปวันที่ 1 ต.ค.',
+        bars: [
+          { name: 'เงินเดือน',    from: '21/8', to: '20/9', color: 'dark' },
+          { name: 'ค่าคอมบาส',   from: '21/7', to: '20/8', color: 'red',   caption: 'ช้ากว่ารอบเงินเดือน 1 รอบ' },
+          { name: 'ค่าคอมเครดิต', from: '1/8',  to: '31/8', color: 'hatch', caption: 'ยอดขายทั้งเดือน ส.ค.' },
+        ] },
+
+      { type: 'timeline',
+        question: 'ตัวอย่าง', sub: 'รอบจ่ายวันที่ *1 ต.ค.*',
+        store: "LOTUS'S", pay: '1/10', slipTitle: 'สลิปวันที่ 1 ต.ค.',
+        bars: [
+          { name: 'เงินเดือน',    from: '21/8', to: '20/9', color: 'dark' },
+          { name: 'ค่าคอมบาส',   from: '21/7', to: '20/8', color: 'red',   missing: "Lotus's ไม่มี" },
+          { name: 'ค่าคอมเครดิต', from: '1/8',  to: '31/8', color: 'hatch', caption: 'ยอดขายทั้งเดือน ส.ค.' },
+        ] },
+
+      { type: 'table',
+        question: 'SUMMARY', highlightLabel: 'รอบจ่ายวันที่', highlight: '1 ต.ค.',
+        tableTitle: 'สรุป', tableTag: 'จ่าย 1 ต.ค.',
+        columns: ["LOTUS'S", '*BIG C*'],
+        rows: [
+          { name: 'เงินเดือน',    values: ['21 ส.ค. –\n20 ก.ย.', '21 ส.ค. –\n20 ก.ย.'] },
+          { name: 'ค่าคอมบาส',   sub: 'สินค้าฝากขาย', values: ['ไม่มี', '*21 ก.ค. –\n20 ส.ค.*'] },
+          { name: 'ค่าคอมเครดิต', values: ['1 – 31 ส.ค.', '1 – 31 ส.ค.'] },
+        ],
+        stamp: ['PAYDAY', 'จ่ายทุกวันที่ 1 ของเดือน'] },
+    ],
+  },
+
+  /* ───────── หัวข้อที่ยังไม่พร้อม ───────── */
+  { id: 'rules', code: 'RUL', title: 'กฎระเบียบการทำงานบริษัท', desc: 'ข้อควรรู้และข้อปฏิบัติ', ready: false, pages: [] },
+  { id: 'sales', code: 'SAL', title: 'การแจ้งยอดขาย',          desc: 'ขั้นตอนส่งยอดขายประจำวัน', ready: false, pages: [] },
+  { id: 'claim', code: 'CLM', title: 'วิธีการแจ้งของเสีย & เปลี่ยนของ', desc: 'ขั้นตอนแจ้งสินค้าเสียและเปลี่ยนสินค้า', ready: false, pages: [] },
+];
+/* ═══════════════════ จบส่วนแก้ข้อความ ═══════════════════ */
+</script>
+<style>
+  /* Layout: หน้ากระดาษแนวตั้ง 1080×1920 ย่อ/ขยายให้พอดีจอ + แถบปุ่มกระดาษด้านล่าง (ธีมเดียวตั้งใจ ไม่มีโหมดมืด) */
+  :root{
+    --bg:#E8E4DA; --dot:#CFC8BA; --paper:#F7F4ED; --ink:#2B2825;
+    --muted:#8A8377; --faint:#D9D3C6; --red:#CF3B2B; --red-soft:#F3D9D3;
+    --mono:'IBM Plex Mono','IBM Plex Sans Thai Looped',ui-monospace,Menlo,monospace;
+    --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai','Leelawadee UI',Tahoma,sans-serif;
+    --bw:3px;
+    color-scheme:light;
+  }
+  html,body{height:100%}
+  [hidden]{display:none!important}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--thai);
+    display:flex;flex-direction:column;overflow:hidden}
+  button{font:inherit;color:inherit}
+
+  /* ----- พื้นที่แสดงหน้า ----- */
+  #view{flex:1;position:relative;overflow:hidden;touch-action:pan-y;
+    background-color:var(--bg);
+    background-image:radial-gradient(var(--dot) 1.2px, transparent 1.5px);background-size:22px 22px}
+  #stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;transform-origin:center center}
+  #shake{position:absolute;inset:0}
+  #pageHost{position:absolute;inset:0}
+
+  /* ----- แถบปุ่มล่าง ----- */
+  #nav{flex:none;display:flex;align-items:center;gap:8px;background:var(--paper);
+    border-top:2px solid var(--ink);padding:10px max(16px, calc((100% - 720px) / 2)) calc(10px + env(safe-area-inset-bottom,0px))}
+  .nb{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;min-width:46px;padding:0 14px;
+    background:var(--paper);border:2px solid var(--ink);font-family:var(--thai);font-size:15px;font-weight:600;cursor:pointer}
+  .nb:hover{background:var(--bg)}
+  .nb.primary{background:var(--ink);color:var(--paper)}
+  .nb.primary:hover{background:#403b36}
+  .nb[disabled]{opacity:.3;cursor:default}
+  .nb:focus-visible,.topic:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+  .nb svg{width:18px;height:18px;flex:none}
+  #counter{flex:1;text-align:center;font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:1px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  #navHint{flex:1;text-align:center;font-size:15px;color:var(--muted)}
+  @media (max-width:420px){ .nb .lbl{display:none} .nb{padding:0 12px} }
+
+  /* ----- ชิ้นส่วนกระดาษ (หน่วยเป็น px บนกระดาษ 1080 กว้าง) ----- */
+  .abs{position:absolute}
+  .card{position:absolute;background:var(--paper);border:var(--bw) solid var(--ink);box-shadow:0 10px 0 -4px rgba(43,40,37,.10)}
+  .hd{display:flex;align-items:stretch;height:72px;border-bottom:var(--bw) solid var(--ink);
+    font-family:var(--mono);font-size:30px;letter-spacing:2px;text-transform:uppercase}
+  .hd>div{display:flex;align-items:center;padding:0 22px;white-space:nowrap}
+  .hd .id{border-right:var(--bw) solid var(--ink);font-weight:600}
+  .hd .ttl{flex:1;overflow:hidden}
+  .hd .tag{color:var(--red);font-weight:600}
+  .hd .tag.th{font-family:var(--thai);letter-spacing:0;font-size:36px;font-weight:700}
+  .q{left:60px;width:960px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+  .q .en{font-family:var(--mono);font-weight:700;font-size:70px;letter-spacing:12px;line-height:1.1}
+  .q .en.thai{font-family:var(--thai);letter-spacing:4px;font-size:76px;line-height:1.15}
+  .q .th{font-size:38px;color:var(--muted)}
+  .slip{position:absolute;background:var(--paper);border:var(--bw) solid var(--ink);padding:18px 30px;font-size:52px;
+    display:flex;align-items:center;gap:24px;white-space:nowrap}
+  .box{width:44px;height:44px;border:var(--bw) solid var(--ink);flex:none;position:relative;background:var(--paper)}
+  .box .tick{position:absolute;left:-4px;top:-12px;width:54px;height:54px;overflow:visible}
+  .tick path{fill:none;stroke:var(--red);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+  .stamp{position:absolute;color:var(--red);border:7px double var(--red);padding:14px 34px 12px;text-align:center;
+    font-family:var(--mono);background:rgba(247,244,237,.55);mix-blend-mode:multiply;white-space:nowrap}
+  .stamp .big{font-size:84px;font-weight:700;letter-spacing:8px;line-height:1}
+  .stamp .sm{font-family:var(--thai);font-size:38px;font-weight:600;letter-spacing:2px;margin-top:6px}
+  .pill{font-family:var(--mono);font-size:36px;font-weight:600;border:var(--bw) solid var(--ink);padding:6px 20px;white-space:nowrap}
+  .pill.red{border-color:var(--red);color:var(--red)}
+  .muted{color:var(--muted)} .red{color:var(--red)}
+  b.red{font-weight:700}
+  .grid-v{position:absolute;width:0;border-left:2px dashed var(--faint)}
+  .mlabel{position:absolute;font-size:36px;font-weight:600;text-align:center;color:var(--muted)}
+  .rowlab{position:absolute;left:40px;display:flex;align-items:baseline;gap:22px;white-space:nowrap}
+  .rowlab .n{font-size:46px;font-weight:700;background:var(--paper);padding-right:6px}
+  .rowlab .d{font-size:34px;font-weight:600;background:var(--paper)}
+  .bar{position:absolute;height:58px;border:var(--bw) solid var(--ink);transform-origin:left center}
+  .bar.dark{background:var(--ink)}
+  .bar.red{background:var(--red);border-color:var(--red)}
+  .bar.hatch{background:repeating-linear-gradient(-45deg,var(--red) 0 7px,var(--red-soft) 7px 18px);border-color:var(--red)}
+  .conn{position:absolute;height:0;border-top:3px dashed var(--muted);transform-origin:left center}
+  .cap{position:absolute;left:40px;font-size:32px;color:var(--muted);white-space:nowrap}
+  .dot{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--red);margin:-11px 0 0 -11px}
+  .crow{display:flex;align-items:center;justify-content:space-between;padding:0 44px;height:172px;border-bottom:2px solid var(--faint)}
+  .crow.tall{height:200px}
+  .crow:last-child{border-bottom:none}
+  .crow .nm{font-size:54px;font-weight:700}
+  table.sum{border-collapse:collapse;width:100%;font-size:38px}
+  table.sum td{border-bottom:2px solid var(--faint);padding:22px 20px;vertical-align:middle;line-height:1.3}
+  table.sum tr.h td{font-family:var(--mono);font-size:32px;font-weight:700;letter-spacing:2px;border-bottom:var(--bw) solid var(--ink);padding:18px 20px}
+  table.sum td.l{font-weight:700;width:300px}
+  table.sum tr:last-child td{border-bottom:none}
+  .strike{position:absolute;left:-10px;top:50%;height:6px;background:var(--red);transform-origin:left center}
+
+  /* ----- หน้าสารบัญ ----- */
+  .topic{position:absolute;left:60px;width:960px;height:210px;background:var(--paper);border:var(--bw) solid var(--ink);
+    display:flex;align-items:stretch;text-align:left;padding:0;cursor:pointer;box-shadow:0 10px 0 -4px rgba(43,40,37,.10)}
+  .topic .no{width:140px;flex:none;border-right:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:72px;font-weight:700}
+  .topic .bd{flex:1;min-width:0;padding:20px 32px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .topic .tt{font-size:46px;font-weight:700;line-height:1.2}
+  .topic .ds{font-size:31px;color:var(--muted)}
+  .topic .go{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--red);letter-spacing:1px}
+  .topic.soon{cursor:default}
+  .topic.soon .no,.topic.soon .tt{color:var(--muted)}
+  .topic:not(.soon):hover{background:#fbf9f4}
+  .soonStamp{position:absolute;right:26px;top:-30px;color:var(--red);border:5px double var(--red);padding:4px 20px;
+    font-size:32px;font-weight:700;transform:rotate(-6deg);mix-blend-mode:multiply;background:rgba(247,244,237,.6)}
+</style>
+</head>
+<body>
+
+<div id="view" aria-live="polite">
+  <div id="stage"><div id="shake"><div id="pageHost"></div></div></div>
+</div>
+
+<nav id="nav" aria-label="เลื่อนหน้า">
+  <button class="nb" id="btnHome" type="button" aria-label="กลับสารบัญ">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="lbl">สารบัญ</span></button>
+  <button class="nb" id="btnPrev" type="button" aria-label="หน้าก่อนหน้า">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M15 5l-7 7 7 7"/></svg><span class="lbl">ก่อนหน้า</span></button>
+  <div id="counter">01 / 07</div>
+  <div id="navHint" hidden></div>
+  <button class="nb" id="btnReplay" type="button" aria-label="เล่นซ้ำ">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5"/></svg></button>
+  <button class="nb primary" id="btnNext" type="button" aria-label="หน้าถัดไป">
+    <span class="lbl" id="nextLbl">ถัดไป</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 5l7 7-7 7"/></svg></button>
+</nav>
+
+<script>
+/* ================= ตัวช่วยข้อความ / วันที่ ================= */
+const TH_MONTHS = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+// กันอักขระพิเศษ HTML
+function escapeHtml(text){ return String(text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// แปลง *ข้อความ* เป็นตัวแดง และ \n เป็นขึ้นบรรทัด
+function formatRichText(text){ return escapeHtml(text).replace(/\*([^*]+)\*/g,'<b class="red">$1</b>').replace(/\n/g,'<br>'); }
+// อ่านวันที่แบบ '21/8'
+function parseDayMonth(text){ const [d, m] = String(text).split('/').map(Number); return { d, m }; }
+// แสดงวันที่เป็น '21 ส.ค.'
+function formatDayMonth(date){ return `${date.d} ${TH_MONTHS[date.m]}`; }
+// แสดงช่วงวันที่ เช่น '21 ก.ค. – 20 ส.ค.' หรือ '1 – 31 ส.ค.'
+function formatDateRange(from, to){
+  if (from.m === to.m) return `${from.d} – ${to.d} ${TH_MONTHS[to.m]}`;
+  return `${formatDayMonth(from)} – ${formatDayMonth(to)}`;
+}
+// เช็กว่าเป็นภาษาอังกฤษล้วน (ใช้ฟอนต์พิมพ์ดีด)
+function isLatinOnly(text){ return /^[\x00-\x7F]+$/.test(text); }
+
+/* ================= แกนเวลารายเดือน ================= */
+// สร้างแกนเวลา: เดือนแรกสุดของข้อมูล → เดือนอ้างอิง พร้อมฟังก์ชันแปลงวันที่เป็นลำดับวัน
+function buildMonthAxis(dates, anchorMonth, anchorExtraDays){
+  const relMonth = m => { let off = ((m - anchorMonth) % 12 + 12) % 12; return off > 0 ? off - 12 : 0; };
+  const minRel = Math.min(...dates.map(dt => relMonth(dt.m)));
+  const months = []; let dayCursor = 0;
+  for (let rel = minRel; rel <= 0; rel++){
+    const m = ((anchorMonth - 1 + rel) % 12 + 12) % 12 + 1;
+    const len = (rel === 0 && anchorExtraDays != null) ? anchorExtraDays : DAYS_IN_MONTH[m];
+    months.push({ rel, m, start: dayCursor, len }); dayCursor += len;
+  }
+  const monthStart = rel => months.find(x => x.rel === rel).start;
+  return {
+    months, totalDays: dayCursor,
+    dayStart: dt => monthStart(relMonth(dt.m)) + dt.d - 1,   // เริ่มต้นวันนั้น
+    dayEnd:   dt => monthStart(relMonth(dt.m)) + dt.d,       // สิ้นสุดวันนั้น
+  };
+}
+
+/* ================= เทมเพลตแต่ละแบบหน้า ================= */
+const tickSvg = '<svg class="tick" viewBox="0 0 54 54"><path d="M8 28 L22 42 L48 8"/></svg>';
+
+// การ์ดคำถามด้านบน
+function renderQuestionCard(question, sub, t, extraStyle=''){
+  const cls = isLatinOnly(question) ? 'en' : 'en thai';
+  return `<div class="card q" data-a="card" data-t="${t}" style="top:230px;${extraStyle}">
+    <div class="${cls}">${formatRichText(question)}</div>${sub ? `<div class="th">${formatRichText(sub)}</div>` : ''}</div>`;
+}
+
+// หน้าเปิดหัวข้อ
+function renderCoverPage(page, topic){
+  const rot = [-3, 2.5, -1.5], lefts = [110, 230, 150];
+  return `
+  <div class="card" data-a="card" data-t="0.1" style="left:60px;top:220px;width:960px;height:600px">
+    <div class="hd"><div class="id">${escapeHtml(topic.code)}-00</div><div class="ttl">ONBOARDING</div><div class="tag">START</div></div>
+    <div style="padding:56px 56px 0">
+      <div data-a="type" data-t="0.5" data-d="1.3" data-text="${escapeHtml(page.title)}" style="font-size:108px;font-weight:700;line-height:1.18;min-height:260px"></div>
+      <div class="muted" data-a="fade" data-t="1.9" style="font-size:46px;margin-top:26px">${formatRichText(page.subtitle)}</div>
+    </div>
+  </div>
+  ${page.checklist.map((item, i) => `<div class="slip" data-a="slip" data-r="${rot[i%3]}" data-t="${(2.2 + i*0.4).toFixed(1)}"
+      style="left:${lefts[i%3]}px;top:${960 + i*160}px"><div class="box"></div>${formatRichText(item)}</div>`).join('')}`;
+}
+
+// หน้าเน้นตัวเลขใหญ่ (เช่น วันจ่าย)
+function renderHighlightPage(page){
+  return `
+  ${renderQuestionCard(page.question, page.sub, 0.1)}
+  <div class="card" data-a="card" data-t="0.6" data-r0="4" data-r="-1.5" style="left:240px;top:520px;width:600px;height:640px">
+    <div class="hd"><div class="id">CAL</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(page.calLabel)}</div></div>
+    <div style="position:relative;height:560px;display:flex;align-items:center;justify-content:center">
+      <div style="font-family:var(--mono);font-size:380px;font-weight:700;line-height:1">${escapeHtml(page.big)}</div>
+      <svg class="abs" style="left:90px;top:40px" width="420" height="480" viewBox="0 0 420 480">
+        <path data-a="draw" data-t="1.5" d="M210 30 C 360 30, 400 150, 395 250 C 390 380, 300 455, 200 450 C 90 445, 25 360, 28 240 C 32 120, 110 40, 225 38"
+          fill="none" stroke="#CF3B2B" stroke-width="10" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+  <div class="abs" data-a="card" data-t="2.4" style="left:0;width:1080px;top:1240px;text-align:center">
+    <div style="font-size:56px">${formatRichText(page.line1)}</div>
+    <div class="red" style="font-size:84px;font-weight:700">${formatRichText(page.line2)}</div>
+  </div>
+  <div class="stamp" data-a="stamp" data-r="-10" data-t="3.4" style="left:630px;top:990px">
+    <div class="big">${escapeHtml(page.stamp[0])}</div><div class="sm">${formatRichText(page.stamp[1])}</div></div>`;
+}
+
+// หน้าช่วงวันที่ (เช่น รอบเงินเดือน 21 → 20)
+function renderRangePage(page){
+  const from = parseDayMonth(page.from), to = parseDayMonth(page.to), pay = parseDayMonth(page.pay);
+  const axis = buildMonthAxis([from, to], to.m);
+  const X = d => 40 + 880 * d / axis.totalDays;
+  const x1 = X(axis.dayStart(from)), x2 = X(axis.dayEnd(to));
+  let chart = '';
+  axis.months.forEach(mo => {
+    chart += `<div class="grid-v" data-a="fade" data-t="0.9" style="left:${X(mo.start)}px;top:30px;height:420px"></div>`;
+    chart += `<div class="mlabel" data-a="fade" data-t="0.9" style="left:${X(mo.start)}px;width:${X(mo.start+mo.len)-X(mo.start)}px;top:40px">${TH_MONTHS[mo.m]}</div>`;
+  });
+  chart += `<div class="grid-v" style="left:${X(axis.totalDays)}px;top:30px;height:420px"></div>`;
+  for (let d = 0; d <= axis.totalDays; d += 1){
+    const h = d % 5 === 0 ? 18 : 9;
+    chart += `<div class="abs" style="left:${X(d)}px;top:170px;width:2px;height:${h}px;background:var(--faint)"></div>`;
+  }
+  chart += `<div class="abs" style="left:40px;top:180px;width:880px;height:3px;background:var(--faint)"></div>`;
+  chart += `<div class="bar dark" data-a="grow" data-t="1.8" data-d="1.3" style="left:${x1}px;top:150px;width:${x2-x1}px;height:62px"></div>`;
+  chart += `<div class="abs" data-a="drop" data-t="1.8" style="left:${x1-1}px;top:212px;width:3px;height:100px;background:var(--ink)"></div>`;
+  chart += `<div class="abs" data-a="drop" data-t="1.8" style="left:${x1-110}px;width:220px;text-align:center;top:320px;font-size:40px;font-weight:700">${formatDayMonth(from)}</div>`;
+  chart += `<div class="abs" data-a="drop" data-t="3.0" style="left:${x2-1}px;top:212px;width:3px;height:100px;background:var(--ink)"></div>`;
+  chart += `<div class="abs" data-a="drop" data-t="3.0" style="left:${x2-110}px;width:220px;text-align:center;top:320px;font-size:40px;font-weight:700">${formatDayMonth(to)}</div>`;
+  chart += `<div class="abs" data-a="fade" data-t="3.4" style="left:40px;width:880px;top:395px;text-align:center;font-size:40px;font-weight:600">${formatRichText(page.caption)}</div>`;
+  return `
+  ${renderQuestionCard(page.question, page.sub, 0.1)}
+  <div class="card" data-a="card" data-t="0.6" style="left:60px;top:490px;width:960px;height:560px">
+    <div class="hd"><div class="id">CYC-01</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(page.cardTitle)}</div><div class="tag">${escapeHtml(page.tag)}</div></div>
+    <div style="position:relative;height:482px">${chart}</div>
+  </div>
+  <div class="abs" data-a="card" data-t="4.2" style="left:510px;top:1060px;width:60px;height:110px">
+    <svg width="60" height="110"><path d="M30 5 V95 M8 72 L30 98 L52 72" fill="none" stroke="#2B2825" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="card" data-a="card" data-t="4.5" style="left:60px;top:1180px;width:960px;height:300px">
+    <div class="hd"><div class="id">PAY-01</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(page.exampleTitle)}</div></div>
+    <div style="padding:30px 44px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:48px">${formatRichText(page.workText)} <b>${formatDateRange(from, to)}</b></div>
+      <div style="font-size:48px;display:flex;align-items:center;gap:22px"><div class="box"><svg class="tick" viewBox="0 0 54 54"><path data-a="tick" data-t="5.6" d="M8 28 L22 42 L48 8"/></svg></div>
+        ${formatRichText(page.payText)} <b class="red">${formatDayMonth(pay)}</b></div>
+    </div>
+  </div>
+  ${page.note ? `<div class="abs muted" data-a="fade" data-t="6.2" style="left:0;width:1080px;top:1560px;text-align:center;font-size:38px">${formatRichText(page.note)}</div>` : ''}`;
+}
+
+// หน้าการ์ดหลายใบ (เช่น ค่าคอม 2 แบบ)
+function renderCardsPage(page){
+  let top = 480, t = 0.7, html = renderQuestionCard(page.question, page.sub, 0.1);
+  page.cards.forEach(card => {
+    const height = 72 + card.rows.reduce((sum, r) => sum + (r.sub ? 200 : 172), 0) + 6;
+    html += `<div class="card" data-a="card" data-t="${t.toFixed(1)}" style="left:60px;top:${top}px;width:960px;height:${height}px">
+      <div class="hd"><div class="id">${escapeHtml(card.code)}</div><div class="ttl">${escapeHtml(card.title)}</div></div>
+      ${card.rows.map((r, i) => `<div class="crow ${r.sub ? 'tall' : ''}">
+        <div><div class="nm">${formatRichText(r.name)}</div>${r.sub ? `<div class="muted" style="font-size:36px">${formatRichText(r.sub)}</div>` : ''}</div>
+        <div class="pill ${r.red ? 'red' : ''}" data-a="pop" data-t="${(t + 0.7 + i*0.6).toFixed(1)}">${escapeHtml(r.pill)}</div></div>`).join('')}
+    </div>`;
+    t += 0.8 + card.rows.length * 0.6; top += height + 60;
+  });
+  if (page.callout){
+    html += `<div class="abs" data-a="card" data-t="${t.toFixed(1)}" style="left:0;width:1080px;top:${top + 20}px;text-align:center">
+      <div style="font-size:52px;font-weight:700">${formatRichText(page.callout[0])}</div>
+      <div style="font-size:46px">${formatRichText(page.callout[1] || '')}</div>
+      <div data-a="grow" data-t="${(t + 0.6).toFixed(1)}" data-d="0.6" style="margin:18px auto 0;width:560px;height:6px;background:var(--red);transform-origin:left center"></div></div>`;
+  }
+  return html;
+}
+
+// หน้าไทม์ไลน์ตัวอย่าง (แถบแต่ละรายการวิ่งไปจบที่วันจ่าย)
+function renderTimelinePage(page, topic){
+  const pay = parseDayMonth(page.pay);
+  const bars = page.bars.map(b => ({ ...b, fromD: parseDayMonth(b.from), toD: parseDayMonth(b.to) }));
+  const axis = buildMonthAxis([...bars.flatMap(b => [b.fromD, b.toD]), pay], pay.m, 12);
+  const X = d => 40 + 880 * d / axis.totalDays;
+  const payX = X(axis.dayStart(pay));
+  const chartBottom = 130 + bars.length * 200 + 10;
+  let chart = '';
+  axis.months.filter(mo => mo.rel < 0).forEach(mo => {
+    chart += `<div class="grid-v" data-a="fade" data-t="0.9" style="left:${X(mo.start)}px;top:40px;height:${chartBottom-40}px"></div>`;
+    chart += `<div class="mlabel" data-a="fade" data-t="0.9" style="left:${X(mo.start)}px;width:${X(mo.start+mo.len)-X(mo.start)}px;top:48px">${TH_MONTHS[mo.m]}</div>`;
+  });
+  chart += `<div class="abs" data-a="growy" data-t="1.5" style="left:${payX-2}px;top:40px;width:5px;height:${chartBottom-40}px;background:var(--red);transform-origin:top center"></div>`;
+  chart += `<div class="abs red" data-a="fade" data-t="1.9" style="left:${payX+10}px;top:44px;font-size:30px;font-weight:700;line-height:1.15">${pay.d}<br>${TH_MONTHS[pay.m]}</div>`;
+  let t = 2.6, missingStamps = '';
+  const missingTime = 2.6 + bars.length * 1.6 + 0.4;
+  bars.forEach((b, i) => {
+    const y = 130 + i*200, xa = X(axis.dayStart(b.fromD)), xb = X(axis.dayEnd(b.toD));
+    const faded = b.missing ? `data-a="dim" data-t="${missingTime}"` : '';
+    chart += `<div class="abs" ${faded} style="left:0;top:0;width:100%;height:100%">
+      <div class="rowlab" data-a="slide" data-t="${t.toFixed(1)}" style="top:${y}px"><span class="n">${formatRichText(b.name)}</span><span class="d">${formatDateRange(b.fromD, b.toD)}</span></div>
+      <div class="bar ${b.color || 'dark'}" data-a="grow" data-t="${(t+0.3).toFixed(1)}" data-d="0.9" style="left:${xa}px;top:${y+70}px;width:${xb-xa}px"></div>
+      <div class="conn" data-a="grow" data-t="${(t+1.2).toFixed(1)}" data-d="0.45" style="left:${xb}px;top:${y+98}px;width:${Math.max(0, payX-xb)}px"></div>
+      <div class="dot" data-a="dot" data-t="${(t+1.6).toFixed(1)}" style="left:${payX+0.5}px;top:${y+99}px"></div>
+      ${b.caption ? `<div class="cap" data-a="fade" data-t="${(t+1.5).toFixed(1)}" style="top:${y+140}px">${formatRichText(b.caption)}</div>` : ''}
+    </div>`;
+    if (b.missing) missingStamps += `<div class="stamp" data-a="stamp" data-r="-4" data-t="${(missingTime+0.6).toFixed(1)}" style="left:300px;top:${y+40}px;padding:6px 26px"><div class="sm" style="font-size:44px;margin:0">${formatRichText(b.missing)}</div></div>`;
+    t += 1.6;
+  });
+  const cardH = chartBottom + 72 + 60;
+  const slipTop = 450 + cardH + 60;
+  const slipTickStart = missingTime + (bars.some(b => b.missing) ? 1.4 : 0);
+  const slipRows = bars.map((b, i) => `
+    <div style="display:flex;align-items:center;gap:24px;position:relative;${b.missing ? 'color:var(--muted)' : ''}">
+      <div class="box">${b.missing ? '' : `<svg class="tick" viewBox="0 0 54 54"><path data-a="tick" data-t="${(slipTickStart + 0.8 + i*0.5).toFixed(1)}" d="M8 28 L22 42 L48 8"/></svg>`}</div>
+      <span style="position:relative">${formatRichText(b.name)}${b.missing ? `<span class="strike" data-a="grow" data-d="0.45" data-t="${(slipTickStart + 0.8 + i*0.5).toFixed(1)}" style="width:calc(100% + 90px);left:-80px"></span>` : ''}</span>
+      ${b.missing ? `<span class="red" data-a="fade" data-t="${(slipTickStart + 1.2 + i*0.5).toFixed(1)}" style="font-size:40px;font-weight:600;margin-left:16px">${formatRichText(b.missing)}</span>` : ''}
+    </div>`).join('');
+  return `
+  ${renderQuestionCard(page.question, page.sub, 0.1, 'height:170px')}
+  <div class="card" data-a="card" data-t="0.5" style="left:60px;top:450px;width:960px;height:${cardH}px">
+    <div class="hd"><div class="id">EX-01</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">ใครได้อะไร</div><div class="tag">${escapeHtml(page.store)}</div></div>
+    <div style="position:relative;height:${cardH-78}px">${chart}${missingStamps}</div>
+  </div>
+  <div class="card" data-a="card" data-t="${slipTickStart.toFixed(1)}" style="left:60px;top:${slipTop}px;width:960px;height:${72 + 52 + bars.length*70 + (bars.length-1)*22 + 10}px">
+    <div class="hd"><div class="id">SLIP</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(page.slipTitle)}</div></div>
+    <div style="padding:26px 44px;display:flex;flex-direction:column;gap:22px;font-size:48px">${slipRows}</div>
+  </div>`;
+}
+
+// หน้าตารางสรุป
+function renderTablePage(page){
+  const cell = v => (v === 'ไม่มี' || v === '-') ? `<td class="muted">${formatRichText(v)}</td>` : `<td>${formatRichText(v)}</td>`;
+  return `
+  <div class="card q" data-a="card" data-t="0.1" style="top:230px;height:250px;gap:14px">
+    <div class="${isLatinOnly(page.question) ? 'en' : 'en thai'}">${formatRichText(page.question)}</div>
+    <div style="font-size:58px;font-weight:700;display:flex;align-items:center;gap:20px">${formatRichText(page.highlightLabel)}
+      <span class="red" style="border:5px solid var(--red);padding:0 22px;background:var(--red-soft)">${formatRichText(page.highlight)}</span></div>
+  </div>
+  <div class="card" data-a="card" data-t="0.6" style="left:60px;top:530px;width:960px">
+    <div class="hd"><div class="id">SUM</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(page.tableTitle)}</div><div class="tag th">${formatRichText(page.tableTag)}</div></div>
+    <table class="sum">
+      <tr class="h"><td></td>${page.columns.map(c => `<td>${formatRichText(c)}</td>`).join('')}</tr>
+      ${page.rows.map((r, i) => `<tr data-a="slide" data-t="${(1.3 + i*0.6).toFixed(1)}"><td class="l">${formatRichText(r.name)}${r.sub ? `<div class="muted" style="font-size:30px;font-weight:400">${formatRichText(r.sub)}</div>` : ''}</td>${r.values.map(cell).join('')}</tr>`).join('')}
+    </table>
+  </div>
+  ${page.stamp ? `<div class="stamp" data-a="stamp" data-r="-6" data-t="${(1.5 + page.rows.length*0.6 + 0.5).toFixed(1)}" style="left:250px;top:1290px">
+    <div class="big">${escapeHtml(page.stamp[0])}</div><div class="sm">${formatRichText(page.stamp[1])}</div></div>` : ''}`;
+}
+
+const PAGE_RENDERERS = { cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
+  cards: renderCardsPage, timeline: renderTimelinePage, table: renderTablePage };
+
+/* ================= หน้าสารบัญ ================= */
+// วาดหน้าสารบัญจากรายการหัวข้อ
+function renderHomePage(){
+  const rot = [-0.6, 0.5, -0.4, 0.6];
+  return `
+  <div class="card" style="left:60px;top:60px;width:960px;height:78px">
+    <div class="hd" style="border-bottom:none"><div class="id">${escapeHtml(SITE.code)}</div><div class="ttl">INDEX · สารบัญ</div><div class="tag">${String(TOPICS.length).padStart(2,'0')} หัวข้อ</div></div></div>
+  <div class="card" style="left:60px;top:200px;width:960px;height:480px">
+    <div class="hd"><div class="id">BOOK</div><div class="ttl">HANDBOOK</div><div class="tag">PC</div></div>
+    <div style="padding:50px 56px 0">
+      <div style="font-size:92px;font-weight:700;line-height:1.15;white-space:nowrap">${formatRichText(SITE.title)}</div>
+      <div class="muted" style="font-size:40px;margin-top:22px">${formatRichText(SITE.company)}</div>
+      <div style="font-size:40px;margin-top:10px;font-weight:600">${formatRichText(SITE.hint)} <span class="red">↓</span></div>
+    </div>
+  </div>
+  ${TOPICS.map((tp, i) => {
+    const soon = !tp.ready || !tp.pages.length;
+    return `<button type="button" class="topic ${soon ? 'soon' : ''}" ${soon ? 'aria-disabled="true" tabindex="-1"' : `data-go="${escapeHtml(tp.id)}"`}
+      style="top:${760 + i*250}px;transform:rotate(${rot[i%4]}deg)">
+      <div class="no">${String(i+1).padStart(2,'0')}</div>
+      <div class="bd"><div class="tt">${formatRichText(tp.title)}</div>
+        <div class="ds">${formatRichText(tp.desc || '')}</div>
+        ${soon ? '' : `<div class="go">${tp.pages.length} หน้า · แตะเพื่อเปิด →</div>`}</div>
+      ${soon ? '<div class="soonStamp">เร็ว ๆ นี้</div>' : ''}
+    </button>`; }).join('')}`;
+}
+
+/* ================= ตัวสร้างแอนิเมชัน ================= */
+let currentTimeline = null;
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// สร้างแอนิเมชันจาก data-a / data-t ของแต่ละชิ้นในหน้า
+function buildPageAnimation(host){
+  const tl = gsap.timeline();
+  host.querySelectorAll('[data-a]').forEach(el => {
+    const t = parseFloat(el.dataset.t || 0), r = parseFloat(el.dataset.r || 0), d = parseFloat(el.dataset.d || 0);
+    switch (el.dataset.a){
+      case 'card':  tl.fromTo(el, {opacity:0, y:70, rotation: parseFloat(el.dataset.r0 || r)}, {opacity:1, y:0, rotation:r, duration:.6, ease:'power3.out'}, t); break;
+      case 'slip':  tl.fromTo(el, {opacity:0, x:-900, rotation:r-14}, {opacity:1, x:0, rotation:r, duration:.7, ease:'back.out(1.4)'}, t); break;
+      case 'stamp':
+        tl.fromTo(el, {opacity:0, scale:2.6, rotation:r-6}, {opacity:.95, scale:1, rotation:r, duration:.28, ease:'power4.in'}, t);
+        tl.fromTo('#shake', {x:0, y:0}, {keyframes:[{x:-6,y:4,duration:.04},{x:5,y:-3,duration:.04},{x:0,y:0,duration:.05}]}, t + .28); break;
+      case 'grow':  tl.fromTo(el, {scaleX:0}, {scaleX:1, duration:d || 1, ease:'power2.inOut'}, t); break;
+      case 'growy': tl.fromTo(el, {scaleY:0}, {scaleY:1, duration:.6, ease:'power2.out'}, t); break;
+      case 'fade':  tl.fromTo(el, {opacity:0}, {opacity:1, duration:.45}, t); break;
+      case 'drop':  tl.fromTo(el, {opacity:0, y:-20}, {opacity:1, y:0, duration:.4}, t); break;
+      case 'slide': tl.fromTo(el, {opacity:0, x:-30}, {opacity:1, x:0, duration:.4}, t); break;
+      case 'pop':   tl.fromTo(el, {opacity:0, scale:.6}, {opacity:1, scale:1, duration:.35, ease:'back.out(2)'}, t); break;
+      case 'dot':   tl.fromTo(el, {scale:0}, {scale:1, duration:.25, ease:'back.out(3)'}, t); break;
+      case 'dim':   tl.to(el, {opacity:.18, duration:.5}, t); break;
+      case 'tick':  tl.fromTo(el, {strokeDasharray:70, strokeDashoffset:70}, {strokeDashoffset:0, duration:.35, ease:'power2.out'}, t); break;
+      case 'draw':  tl.fromTo(el, {strokeDasharray:1400, strokeDashoffset:1400}, {strokeDashoffset:0, duration:.9, ease:'power2.inOut'}, t); break;
+      case 'type': {
+        const graphemes = [...new Intl.Segmenter('th', {granularity:'grapheme'}).segment(el.dataset.text)].map(s => s.segment);
+        const proxy = {p:0};
+        const paint = () => { const n = Math.round(proxy.p * graphemes.length);
+          el.innerHTML = escapeHtml(graphemes.slice(0, n).join('')).replace(/\n/g,'<br>') + (proxy.p > 0 && proxy.p < 1 ? '<span class="red">|</span>' : ''); };
+        el.innerHTML = '';
+        tl.fromTo(proxy, {p:0}, {p:1, duration:d || 1.2, ease:'none', onUpdate:paint, onComplete:paint}, t); break;
+      }
+    }
+  });
+  return tl;
+}
+
+/* ================= ตัวควบคุมหน้า ================= */
+const pageHost = document.getElementById('pageHost');
+const btnHome = document.getElementById('btnHome'), btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext'), btnReplay = document.getElementById('btnReplay');
+const counterEl = document.getElementById('counter'), navHint = document.getElementById('navHint'), nextLbl = document.getElementById('nextLbl');
+let currentTopic = null, currentIndex = 0;
+
+// อ่านตำแหน่งจากลิงก์ เช่น #payroll-3
+function readLocation(){
+  const hash = (location.hash || '').replace('#', '');
+  const match = hash.match(/^([a-z0-9_]+?)(?:-(\d+))?$/i);
+  if (!match) return { topic: null, index: 0 };
+  const topic = TOPICS.find(tp => tp.id === match[1] && tp.ready && tp.pages.length);
+  if (!topic) return { topic: null, index: 0 };
+  const index = Math.min(Math.max(parseInt(match[2] || '1', 10) - 1, 0), topic.pages.length - 1);
+  return { topic, index };
+}
+
+// เปลี่ยนหน้าโดยเขียนลิงก์ใหม่ (ปุ่มย้อนกลับของมือถือใช้ได้)
+function goTo(topicId, index){
+  const target = topicId ? `#${topicId}-${index + 1}` : '#';
+  if (location.hash === target || (!topicId && !location.hash)) { showCurrent(); return; }
+  location.hash = topicId ? `${topicId}-${index + 1}` : '';
+}
+
+// แสดงหน้าตามลิงก์ปัจจุบัน
+function showCurrent(){
+  const loc = readLocation();
+  currentTopic = loc.topic; currentIndex = loc.index;
+  if (currentTimeline) currentTimeline.kill();
+  gsap.set('#shake', {x:0, y:0});
+  if (!currentTopic){
+    pageHost.innerHTML = renderHomePage();
+    [btnHome, btnPrev, btnNext, btnReplay].forEach(b => b.hidden = true);
+    counterEl.hidden = true; navHint.hidden = false; navHint.textContent = SITE.hint;
+    currentTimeline = null;
+    return;
+  }
+  const page = currentTopic.pages[currentIndex];
+  const total = currentTopic.pages.length;
+  pageHost.innerHTML = `
+    <div class="card" style="left:60px;top:60px;width:960px;height:78px">
+      <div class="hd" style="border-bottom:none"><div class="id">${escapeHtml(currentTopic.code)}</div>
+        <div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(currentTopic.title)}</div>
+        <div class="tag">${String(currentIndex+1).padStart(2,'0')}/${String(total).padStart(2,'0')}</div></div></div>
+    <div id="pageBody" class="abs" style="inset:0">${PAGE_RENDERERS[page.type](page, currentTopic)}</div>`;
+  [btnHome, btnPrev, btnNext, btnReplay].forEach(b => b.hidden = false);
+  counterEl.hidden = false; navHint.hidden = true;
+  counterEl.textContent = `${String(currentIndex+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}`;
+  btnPrev.disabled = currentIndex === 0;
+  const isLast = currentIndex === total - 1;
+  nextLbl.textContent = isLast ? 'จบ · สารบัญ' : 'ถัดไป';
+  btnNext.setAttribute('aria-label', isLast ? 'จบหัวข้อ กลับสารบัญ' : 'หน้าถัดไป');
+  currentTimeline = buildPageAnimation(document.getElementById('pageBody'));
+  if (prefersReducedMotion) currentTimeline.progress(1);
+}
+
+// ไปหน้าถัดไป (หน้าสุดท้าย → กลับสารบัญ)
+function goNext(){ if (!currentTopic) return; if (currentIndex < currentTopic.pages.length - 1) goTo(currentTopic.id, currentIndex + 1); else goTo(null); }
+// ย้อนกลับหนึ่งหน้า
+function goPrev(){ if (currentTopic && currentIndex > 0) goTo(currentTopic.id, currentIndex - 1); }
+
+btnNext.addEventListener('click', goNext);
+btnPrev.addEventListener('click', goPrev);
+btnHome.addEventListener('click', () => goTo(null));
+btnReplay.addEventListener('click', () => { if (currentTimeline) currentTimeline.restart(); });
+pageHost.addEventListener('click', e => { const btn = e.target.closest('[data-go]'); if (btn) goTo(btn.dataset.go, 0); });
+window.addEventListener('hashchange', showCurrent);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') goNext();
+  else if (e.key === 'ArrowLeft') goPrev();
+  else if (e.key === 'Escape') goTo(null);
+});
+
+// ปัดซ้าย/ขวาเพื่อเปลี่ยนหน้า
+(function enableSwipe(){
+  const view = document.getElementById('view'); let startX = null, startY = 0;
+  view.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, {passive:true});
+  view.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX, dy = e.changedTouches[0].clientY - startY; startX = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { dx < 0 ? goNext() : goPrev(); }
+  }, {passive:true});
+})();
+
+// ย่อ/ขยายกระดาษให้พอดีจอ
+function fitStage(){
+  const view = document.getElementById('view').getBoundingClientRect();
+  const scale = Math.min(view.width / 1080, view.height / 1920);
+  document.getElementById('stage').style.transform = `translate(-50%,-50%) scale(${scale})`;
+}
+new ResizeObserver(fitStage).observe(document.getElementById('view'));
+fitStage();
+
+// เริ่มแสดงหลังฟอนต์โหลด (ถ้าโหลดไม่ได้ก็แสดงด้วยฟอนต์สำรอง)
+(document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(showCurrent);
+</script>
+</body>
+</html>
