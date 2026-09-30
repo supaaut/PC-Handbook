@@ -314,6 +314,7 @@ const TOPICS = [
   .points .pn{flex:none;width:54px;height:54px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;
     font-family:var(--mono);font-size:30px;font-weight:700;margin-top:0}
 
+  .badge{font-size:28px;font-weight:700;color:var(--red);border:3px solid var(--red);padding:2px 12px;background:var(--paper);align-self:center}
   .linkBtn{align-self:flex-start;margin-top:8px;background:var(--red);color:var(--paper);text-decoration:none;font-size:40px;font-weight:700;padding:14px 40px;border:var(--bw) solid var(--ink)}
   .linkBtn:focus-visible{outline:5px solid var(--ink);outline-offset:4px}
   /* ----- หน้าสารบัญ ----- */
@@ -524,12 +525,13 @@ function renderTimelinePage(page, topic){
     const y = 130 + i*200, xa = X(axis.dayStart(b.fromD)), xb = X(axis.dayEnd(b.toD));
     const faded = b.missing ? `data-a="dim" data-t="${missingTime}"` : '';
     chart += `<div class="abs" ${faded} style="left:0;top:0;width:100%;height:100%">
-      <div class="rowlab" data-a="slide" data-t="${t.toFixed(1)}" style="top:${y}px"><span class="n">${formatRichText(b.name)}</span><span class="d">${formatDateRange(b.fromD, b.toD)}</span></div>
+      <div class="rowlab" data-a="slide" data-t="${t.toFixed(1)}" style="top:${y}px"><span class="n">${formatRichText(b.name)}</span><span class="d">${formatDateRange(b.fromD, b.toD)}</span>${b.badge ? `<span class="badge">${formatRichText(b.badge)}</span>` : ''}</div>
       <div class="bar ${b.color || 'dark'}" data-a="grow" data-t="${(t+0.3).toFixed(1)}" data-d="0.9" style="left:${xa}px;top:${y+70}px;width:${xb-xa}px"></div>
       <div class="conn" data-a="grow" data-t="${(t+1.2).toFixed(1)}" data-d="0.45" style="left:${xb}px;top:${y+98}px;width:${Math.max(0, payX-xb)}px"></div>
       <div class="dot" data-a="dot" data-t="${(t+1.6).toFixed(1)}" style="left:${payX+0.5}px;top:${y+99}px"></div>
       ${b.caption ? `<div class="cap" data-a="fade" data-t="${(t+1.5).toFixed(1)}" style="top:${y+140}px">${formatRichText(b.caption)}</div>` : ''}
     </div>`;
+    if (b.missing && b.missingNote) missingStamps += `<div class="cap red" data-a="fade" data-t="${(missingTime+0.9).toFixed(1)}" style="top:${y+140}px;font-weight:600">${formatRichText(b.missingNote)}</div>`;
     if (b.missing) missingStamps += `<div class="stamp" data-a="stamp" data-r="-4" data-t="${(missingTime+0.6).toFixed(1)}" style="left:300px;top:${y+40}px;padding:6px 26px"><div class="sm" style="font-size:44px;margin:0">${formatRichText(b.missing)}</div></div>`;
     t += 1.6;
   });
