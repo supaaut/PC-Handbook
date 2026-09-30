@@ -289,7 +289,7 @@ const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 // กันอักขระพิเศษ HTML
 function escapeHtml(text){ return String(text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 // แปลง *ข้อความ* เป็นตัวแดง และ \n เป็นขึ้นบรรทัด
-function formatRichText(text){ return escapeHtml(text).replace(/\[\[([^\]]+)\]\]/g,'<span style="display:inline-block;background:#2B2825;color:#F7F4ED;font-weight:700;font-size:1.3em;line-height:1;padding:.05em .3em .12em;margin:0 .04em">$1</span>').replace(/\*([^*]+)\*/g,'<b class="red">$1</b>').replace(/\n/g,'<br>'); }
+function formatRichText(text){ return escapeHtml(text).replace(/\[\[([^\]]+)\]\]/g,'<span style="font-size:1.7em;font-weight:700;line-height:0;margin:0 -.04em">$1</span>').replace(/\*([^*]+)\*/g,'<b class="red">$1</b>').replace(/\n/g,'<br>'); }
 // อ่านวันที่แบบ '21/8'
 function parseDayMonth(text){ const [d, m] = String(text).split('/').map(Number); return { d, m }; }
 // แสดงวันที่เป็น '21 ส.ค.'
