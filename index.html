@@ -244,12 +244,14 @@ const TOPICS = [
   },
   /* ───────── หัวข้อ 4: FAQ คำถามที่พบบ่อย (type: 'faq') ─────────
      q = คำถาม, a = คำตอบ (คำตอบแสดงเป็นตัวแดงทั้งหมด, *ข้อความ* = ตัวหนา)
-     เพิ่ม/ลบข้อได้ เลขข้อ 01 02 ... รันให้เอง */
+     เพิ่ม/ลบข้อได้ เลขข้อ 01 02 ... รันให้เอง (ต่อเลขข้ามหน้าให้เอง)
+     หน้าหนึ่งใส่ได้ประมาณ 5–6 ข้อ ถ้าเต็มให้เพิ่มหน้าใหม่ { type: 'faq', items: [ ... ] }
+     หน้าที่ไม่ใช่หน้าสุดท้าย จะมีป้าย "มีต่อหน้าถัดไป" ที่มุมขวาล่างให้เอง */
   {
     id: 'faq',
     code: 'FAQ',
     title: 'FAQ คำถามที่พบบ่อย',
-    desc: 'เงินเดือน · สลิป · เงินค้ำประกัน · ลาออก',
+    desc: 'เงินเดือน · สลิป · เงินค้ำประกัน · ประกันสังคม',
     ready: true,
     pages: [
       { type: 'faq', items: [
@@ -263,8 +265,16 @@ const TOPICS = [
           a: 'เพราะบริษัทเป็น *ระบบเบิกเงินล่วงหน้า* พนักงานที่เบิกอาจมีค่าคอมและเงินเดือนไม่พอหักคืน จึงต้องรอดูเงินออกรอบสุดท้ายก่อน หลังจากนั้นใช้เวลา *35 วัน* ในการทำเงินค้ำคืน' },
         { q: 'กรณีสงสัยเงินเดือน สอบถามอย่างไร?',
           a: 'ตรวจสอบรายละเอียดที่ *สลิป* ก่อนเป็นอันดับแรก ถ้าติดใจรายการไหน ค่อยสอบถาม *admin* และแจ้งด้วยว่าไม่ตรงกันตรงจุดไหน' },
+      ] },
+      { type: 'faq', items: [
         { q: 'ทำไมเงินงวดสุดท้ายยังมีรายการหัก แม้จะลาออกไปแล้ว?',
           a: 'เพราะยอดนี้หักจาก *งวดเงินค่าคอม* ไม่ใช่เงินเดือน เงินงวดสุดท้ายที่จ่ายคือค่าคอมของช่วงที่ยังทำงานอยู่' },
+        { q: 'เมื่อลาออกแล้ว บริษัทจะแจ้งออกจากประกันสังคมเมื่อไหร่?',
+          a: 'ลาออกในเดือนไหน บริษัทจะแจ้งว่าออก *สิ้นเดือนนั้น* เช่น ออกวันที่ *15 ส.ค.* บริษัทจะแจ้งว่าลาออก *31 ส.ค.* แต่จะแจ้งเรื่องไปยังประกันสังคมในวันที่ *15 ก.ย.*' },
+        { q: 'หลังเริ่มงาน บริษัทจะแจ้งเข้าประกันสังคมวันไหน?',
+          a: 'บริษัทจะแจ้งเข้า *ภายใน 30 วัน* ตั้งแต่วันที่เริ่มงาน' },
+        { q: 'ขอให้บริษัทไม่ส่งประกันสังคม เพราะจะประกันตนเองได้หรือไม่?',
+          a: '*ไม่ได้* เพราะเป็น *หน้าที่ตามกฎหมาย*' },
       ] },
     ],
   },
@@ -401,6 +411,9 @@ const TOPICS = [
   .faqQ .n{flex:none;width:52px;height:52px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:28px;font-weight:700}
   .faqQ .qt{flex:1;min-width:0;font-size:37px;font-weight:700;line-height:1.28;padding-top:2px}
   .faqA{margin:8px 0 0 74px;padding-top:8px;border-top:2px dashed var(--faint);font-size:33px;line-height:1.38;color:var(--red)}
+  .faqNext{position:absolute;right:60px;top:1790px;background:var(--red);color:var(--paper);font-size:40px;font-weight:700;
+    padding:12px 30px;border:var(--bw) solid var(--ink);transform:rotate(-3deg);box-shadow:0 8px 0 -3px rgba(43,40,37,.18);white-space:nowrap;font-family:var(--thai);cursor:pointer}
+  .faqNext:focus-visible{outline:5px solid var(--ink);outline-offset:4px}
 </style>
 </head>
 <body>
@@ -715,15 +728,19 @@ function renderRulesPage(page){
   <div class="abs" style="left:60px;top:460px;width:960px;display:flex;flex-direction:column;gap:26px">${ruleCards}${noteBox}</div>`;
 }
 
-// หน้า FAQ: รวมทุกคำถามในหน้าเดียว แสดงคำตอบครบทุกข้อ (คำตอบเป็นตัวแดง)
-function renderFaqPage(page){
+// หน้า FAQ: รวมหลายคำถามในหน้าเดียว แสดงคำตอบครบทุกข้อ (คำตอบเป็นตัวแดง) เลขข้อต่อจากหน้าก่อน + ป้ายมีต่อหน้าถัดไป
+function renderFaqPage(page, topic){
+  const pageIndex = topic.pages.indexOf(page);
+  const firstNumber = topic.pages.slice(0, pageIndex).reduce((sum, p) => sum + (p.type === 'faq' ? p.items.length : 0), 0);
+  const hasNextPage = pageIndex < topic.pages.length - 1;
   const faqRows = page.items.map((item, i) => `<div class="faqItem">
-      <div class="faqQ"><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="qt">${formatRichText(item.q)}</span></div>
+      <div class="faqQ"><span class="n">${String(firstNumber + i + 1).padStart(2, '0')}</span><span class="qt">${formatRichText(item.q)}</span></div>
       <div class="faqA">${formatRichText(item.a)}</div></div>`).join('');
   return `
   <div class="card q" style="top:200px;height:150px;gap:0">
     <div class="en">FAQ</div><div class="th">คำถามที่พบบ่อย</div></div>
-  <div class="abs" style="left:60px;top:375px;width:960px;display:flex;flex-direction:column;gap:16px">${faqRows}</div>`;
+  <div class="abs" style="left:60px;top:375px;width:960px;display:flex;flex-direction:column;gap:16px">${faqRows}</div>
+  ${hasNextPage ? '<button type="button" class="faqNext" data-next>มีต่อหน้าถัดไป →</button>' : ''}`;
 }
 
 const PAGE_RENDERERS = { faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
@@ -914,6 +931,7 @@ btnPrev.addEventListener('click', goPrev);
 btnHome.addEventListener('click', () => { if (currentGroup) goTo(null); else goToParentList(); });
 btnReplay.addEventListener('click', () => { if (currentTimeline) currentTimeline.restart(); });
 pageHost.addEventListener('click', e => {
+  if (e.target.closest('[data-next]')) { goNext(); return; }
   const zoomBtn = e.target.closest('[data-zoom]'); if (zoomBtn) { openZoom(zoomBtn.dataset.zoom, zoomBtn.getAttribute('aria-label')); return; }
   const groupBtn = e.target.closest('[data-group]'); if (groupBtn) { goToGroup(groupBtn.dataset.group); return; }
   const btn = e.target.closest('[data-go]'); if (btn) goTo(btn.dataset.go, 0); });
