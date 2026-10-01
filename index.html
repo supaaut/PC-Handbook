@@ -678,9 +678,11 @@ function renderTablePage(page){
 }
 
 
-// ขยาย/ย่อรูปให้เต็มกรอบ 960×900 โดยไม่เสียสัดส่วน (รูปแนวนอนเล็กจะถูกขยายขึ้น)
+// ขยาย/ย่อรูปให้เต็มพื้นที่ที่เหลือ (สูงสุด 960×900) โดยไม่เสียสัดส่วน — ข้อความยาวรูปจะเล็กลงให้เอง
 function fitScreenshot(img){
-  const scale = Math.min(960 / img.naturalWidth, 900 / img.naturalHeight);
+  const box = img.closest('.shotBox');
+  const maxHeight = Math.min(900, box ? box.clientHeight : 900);
+  const scale = Math.min(960 / img.naturalWidth, maxHeight / img.naturalHeight);
   img.style.width = Math.round(img.naturalWidth * scale) + 'px';
   img.style.height = Math.round(img.naturalHeight * scale) + 'px';
 }
@@ -691,14 +693,15 @@ function renderPhotoPage(page){
   return `
   <div class="card q" data-a="card" data-t="0.1" style="top:230px;height:170px">
     <div class="en thai" style="font-size:66px"><span class="red">${formatRichText(page.step)}</span> ${formatRichText(page.title)}</div></div>
-  <div class="abs" data-a="card" data-t="0.5" data-r0="3" style="left:60px;top:440px;width:960px;height:900px;display:flex;align-items:center;justify-content:center">
+  <div class="abs" style="left:60px;top:440px;width:960px;height:1440px;display:flex;flex-direction:column;gap:45px">
+  <div class="shotBox" data-a="card" data-t="0.5" data-r0="3" style="flex:0 1 900px;min-height:0;display:flex;align-items:center;justify-content:center">
     <button type="button" class="shotBtn" data-zoom="${escapeHtml(page.image)}" aria-label="ขยายรูป ${escapeHtml(page.title)}">
       <img class="shot" src="${escapeHtml(page.image)}" alt="${escapeHtml(page.title)}" onload="fitScreenshot(this)"><span class="zoomTag">แตะรูปเพื่อขยาย</span></button></div>
-  <div class="card" data-a="card" data-t="1.1" style="left:60px;top:1385px;width:960px">
+  <div class="card" data-a="card" data-t="1.1" style="position:relative;flex:none;width:960px">
     <div class="hd"><div class="id">${escapeHtml((() => { const stepNumber = page.step.replace(/[^0-9.]/g,''); return !stepNumber ? 'STEP' : stepNumber.includes('.') ? 'STEP ' + stepNumber : 'STEP-' + stepNumber.padStart(2,'0'); })())}</div>
       <div class="ttl" style="font-family:var(--thai);letter-spacing:0">ทำตามนี้</div></div>
     <ol class="points">${points.map((p, i) => `<li data-a="slide" data-t="${(1.7 + i*0.5).toFixed(1)}"><span class="pn">${i+1}</span><span>${formatRichText(p)}</span></li>`).join('')}</ol>
-  </div>`;
+  </div></div>`;
 }
 
 // หน้าลิงก์: ปุ่มเปิดเว็บภายนอก + หมายเหตุ (เรียงต่อกันอัตโนมัติ)
