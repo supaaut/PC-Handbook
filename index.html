@@ -304,7 +304,7 @@ const TOPICS = [
     --bw:3px;
     color-scheme:light;
   }
-  html,body{height:100%}
+  html,body{height:100%;touch-action:manipulation}   /* manipulation = ถ่างนิ้วซูมได้ แต่ไม่ซูมเมื่อแตะ 2 ครั้ง */
   [hidden]{display:none!important}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--thai);
     display:flex;flex-direction:column;overflow:hidden}
@@ -331,7 +331,7 @@ const TOPICS = [
   .nb svg{width:18px;height:18px;flex:none}
   #counter{flex:1;text-align:center;font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:1px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
   #navHint{flex:1;text-align:center;font-size:15px;color:var(--muted)}
-  @media (max-width:420px){ .nb .lbl{display:none} .nb{padding:0 12px} }
+  @media (max-width:420px){ .nb:not(#btnHome) .lbl{display:none} .nb{padding:0 12px} }   /* จอแคบ: ซ่อนคำบนปุ่ม ยกเว้นปุ่มสารบัญ */
 
   /* ----- ชิ้นส่วนกระดาษ (หน่วยเป็น px บนกระดาษ 1080 กว้าง) ----- */
   .abs{position:absolute}
