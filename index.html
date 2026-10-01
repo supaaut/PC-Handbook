@@ -230,6 +230,32 @@ const TOPICS = [
         ] },
     ],
   },
+  /* ───────── หัวข้อ 4: FAQ คำถามที่พบบ่อย (type: 'faq') ─────────
+     q = คำถาม, a = คำตอบ (คำตอบแสดงเป็นตัวแดงทั้งหมด, *ข้อความ* = ตัวหนา)
+     เพิ่ม/ลบข้อได้ เลขข้อ 01 02 ... รันให้เอง */
+  {
+    id: 'faq',
+    code: 'FAQ',
+    title: 'FAQ คำถามที่พบบ่อย',
+    desc: 'เงินเดือน · สลิป · เงินค้ำประกัน · ลาออก',
+    ready: true,
+    pages: [
+      { type: 'faq', items: [
+        { q: 'เงินเดือนจ่ายวันไหน?',
+          a: 'จ่าย *ทุกวันที่ 1* ของเดือน' },
+        { q: 'สลิปเงินเดือนได้รับทางไหน วันไหน เวลากี่โมง?',
+          a: 'ส่งทาง *อีเมล* ที่เคยแจ้งไว้กับบริษัท ทุก *วันที่ 1* ไม่เกิน *บ่าย 3 โมง* ของแต่ละรอบ\nแต่อาจเลื่อนวันส่งได้ กรณีติดวันหยุด' },
+        { q: 'เงินค้ำประกันได้รับคืนวันไหน เมื่อออกจากงาน?',
+          a: 'ให้นับว่าทำงานถึงเดือนไหน เช่น ทำงานสิ้นสุดภายใน *ส.ค.* เงินค้ำจะจ่าย *วันที่ 6 พ.ย.* ภายในวัน แต่ไม่ใช่ช่วงเช้าเหมือนเงินเดือนปกติ' },
+        { q: 'ทำไมเงินค้ำถึงจ่ายล่าช้า?',
+          a: 'เพราะบริษัทเป็น *ระบบเบิกเงินล่วงหน้า* พนักงานที่เบิกอาจมีค่าคอมและเงินเดือนไม่พอหักคืน จึงต้องรอดูเงินออกรอบสุดท้ายก่อน หลังจากนั้นใช้เวลา *35 วัน* ในการทำเงินค้ำคืน' },
+        { q: 'กรณีสงสัยเงินเดือน สอบถามอย่างไร?',
+          a: 'ตรวจสอบรายละเอียดที่ *สลิป* ก่อนเป็นอันดับแรก ถ้าติดใจรายการไหน ค่อยสอบถาม *admin* และแจ้งด้วยว่าไม่ตรงกันตรงจุดไหน' },
+        { q: 'ทำไมเงินงวดสุดท้ายยังมีรายการหัก แม้จะลาออกไปแล้ว?',
+          a: 'เพราะยอดนี้หักจาก *งวดเงินค่าคอม* ไม่ใช่เงินเดือน เงินงวดสุดท้ายที่จ่ายคือค่าคอมของช่วงที่ยังทำงานอยู่' },
+      ] },
+    ],
+  },
 ];
 /* ═══════════════════ จบส่วนแก้ข้อความ ═══════════════════ */
 </script>
@@ -356,6 +382,13 @@ const TOPICS = [
   .topic:not(.soon):hover{background:#fbf9f4}
   .soonStamp{position:absolute;right:26px;top:-30px;color:var(--red);border:5px double var(--red);padding:4px 20px;
     font-size:32px;font-weight:700;transform:rotate(-6deg);mix-blend-mode:multiply;background:rgba(247,244,237,.6)}
+
+  /* ----- หน้า FAQ ----- */
+  .faqItem{background:var(--paper);border:var(--bw) solid var(--ink);box-shadow:0 10px 0 -4px rgba(43,40,37,.10);padding:14px 26px 16px}
+  .faqQ{display:flex;align-items:flex-start;gap:22px}
+  .faqQ .n{flex:none;width:52px;height:52px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:28px;font-weight:700}
+  .faqQ .qt{flex:1;min-width:0;font-size:37px;font-weight:700;line-height:1.28;padding-top:2px}
+  .faqA{margin:8px 0 0 74px;padding-top:8px;border-top:2px dashed var(--faint);font-size:33px;line-height:1.38;color:var(--red)}
 </style>
 </head>
 <body>
@@ -670,7 +703,18 @@ function renderRulesPage(page){
   <div class="abs" style="left:60px;top:460px;width:960px;display:flex;flex-direction:column;gap:26px">${ruleCards}${noteBox}</div>`;
 }
 
-const PAGE_RENDERERS = { rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
+// หน้า FAQ: รวมทุกคำถามในหน้าเดียว แสดงคำตอบครบทุกข้อ (คำตอบเป็นตัวแดง)
+function renderFaqPage(page){
+  const faqRows = page.items.map((item, i) => `<div class="faqItem">
+      <div class="faqQ"><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="qt">${formatRichText(item.q)}</span></div>
+      <div class="faqA">${formatRichText(item.a)}</div></div>`).join('');
+  return `
+  <div class="card q" style="top:200px;height:150px;gap:0">
+    <div class="en">FAQ</div><div class="th">คำถามที่พบบ่อย</div></div>
+  <div class="abs" style="left:60px;top:375px;width:960px;display:flex;flex-direction:column;gap:16px">${faqRows}</div>`;
+}
+
+const PAGE_RENDERERS = { faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
   cards: renderCardsPage, timeline: renderTimelinePage, table: renderTablePage };
 
 /* ================= หน้าสารบัญ ================= */
