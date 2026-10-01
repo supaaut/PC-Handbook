@@ -90,7 +90,7 @@ const TOPICS = [
   {
     id: 'payroll',                       // ชื่อลิงก์ภาษาอังกฤษ (ลิงก์ตรง = .../#payroll)
     code: 'PAY',
-    title: 'รอบจ่ายเงินเดือน',
+    title: 'รอบจ่ายเงินเดือน & ค่าคอมมิชชั่น',
     desc: "เงินเดือน · ค่าคอม Lotus's · ค่าคอม Big C",
     ready: true,
     pages: [
@@ -586,7 +586,7 @@ function renderCardsPage(page){
   page.cards.forEach(card => {
     const height = 72 + card.rows.reduce((sum, r) => sum + (r.sub ? 200 : 172), 0) + 6;
     html += `<div class="card" data-a="card" data-t="${t.toFixed(1)}" style="left:60px;top:${top}px;width:960px;height:${height}px">
-      <div class="hd"><div class="id">${escapeHtml(card.code)}</div><div class="ttl">${escapeHtml(card.title)}</div></div>
+      <div class="hd"><div class="id">${escapeHtml(card.code)}</div><div class="ttl">${formatRichText(card.title)}</div></div>
       ${card.rows.map((r, i) => `<div class="crow ${r.sub ? 'tall' : ''}">
         <div><div class="nm">${formatRichText(r.name)}</div>${r.sub ? `<div class="muted" style="font-size:36px">${formatRichText(r.sub)}</div>` : ''}</div>
         <div class="pill ${r.red ? 'red' : ''}" data-a="pop" data-t="${(t + 0.7 + i*0.6).toFixed(1)}">${escapeHtml(r.pill)}</div></div>`).join('')}
