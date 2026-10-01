@@ -311,7 +311,7 @@ const TOPICS = [
   button{font:inherit;color:inherit}
 
   /* ----- พื้นที่แสดงหน้า ----- */
-  #view{flex:1;position:relative;overflow:hidden;touch-action:pan-y;
+  #view{flex:1;position:relative;overflow:hidden;touch-action:pan-x pan-y pinch-zoom;
     background-color:var(--bg);
     background-image:radial-gradient(var(--dot) 1.2px, transparent 1.5px);background-size:22px 22px}
   #stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;transform-origin:center center}
@@ -971,12 +971,15 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Escape') { if (!document.getElementById('zoom').hidden) closeZoom(); else if (currentGroup) goTo(null); else goToParentList(); }
 });
 
-// ปัดซ้าย/ขวาเพื่อเปลี่ยนหน้า
+// ปัดซ้าย/ขวาเพื่อเปลี่ยนหน้า (ไม่ทำงานตอนใช้สองนิ้ว หรือตอนซูมค้างอยู่ เพื่อให้เลื่อนดูหน้าที่ซูมได้)
 (function enableSwipe(){
   const view = document.getElementById('view'); let startX = null, startY = 0;
-  view.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, {passive:true});
+  const isZoomedIn = () => !!(window.visualViewport && window.visualViewport.scale > 1.05);
+  view.addEventListener('touchstart', e => {
+    if (e.touches.length > 1 || isZoomedIn()) { startX = null; return; }
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, {passive:true});
   view.addEventListener('touchend', e => {
-    if (startX === null) return;
+    if (startX === null || e.touches.length > 0 || isZoomedIn()) { startX = null; return; }
     const dx = e.changedTouches[0].clientX - startX, dy = e.changedTouches[0].clientY - startY; startX = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { dx < 0 ? goNext() : goPrev(); }
   }, {passive:true});
