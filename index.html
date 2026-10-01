@@ -215,7 +215,7 @@ const TOPICS = [
             links: [
               { tag: 'WARRANTY', title: 'ลงทะเบียนรับประกันสินค้า', url: 'https://www.inanothai.com/register/' },
             ],
-            note: 'สินค้าโดยปกติรับประกัน *1 ปี*\nมีทีวีบางรุ่นรับประกัน *3 ปี*' },
+            note: 'สินค้า *ลำโพง* และ *ทีวี* รับประกัน *1 ปี*\nยกเว้นทีวี *50 นิ้วขึ้นไป* รับประกัน *3 ปี*\n(ลูกค้าต้องลงทะเบียนรับประกันด้วย)' },
           { type: 'photo', step: '3.4.2', title: 'แจ้งซ่อม: เพิ่มเพื่อน', image: 'images/3.4.2-1.jpg',
             points: [
               'ให้ลูกค้า add LINE *@inanos_service* เพื่อเพิ่มเพื่อน',
@@ -705,7 +705,7 @@ function renderPhotoPage(page){
 }
 
 // หน้าลิงก์: ปุ่มเปิดเว็บภายนอก + หมายเหตุ (เรียงต่อกันอัตโนมัติ)
-function renderLinksPage(page){
+function renderLinksPage(page, topic){
   const linkCards = page.links.map(link => `<div class="card" style="position:relative;width:960px">
       <div class="hd"><div class="id">LINK</div><div class="ttl">${escapeHtml(link.tag)}</div></div>
       <div style="padding:26px 40px 32px;display:flex;flex-direction:column;gap:12px">
@@ -723,7 +723,8 @@ function renderLinksPage(page){
   <div class="abs" style="left:60px;top:520px;width:960px;display:flex;flex-direction:column;gap:36px">
     ${page.intro ? `<div style="font-size:40px;font-weight:600">${formatRichText(page.intro)} ↓</div>` : ''}
     ${linkCards}${noteBox}
-  </div>`;
+  </div>
+  ${renderNextPageTag(page, topic)}`;
 }
 
 // หน้ากฎเป็นข้อ ๆ: ตัวเลขเด่นด้านซ้าย + รายละเอียดด้านขวา + หมายเหตุท้ายหน้า
@@ -746,11 +747,16 @@ function renderRulesPage(page){
   <div class="abs" style="left:60px;top:460px;width:960px;display:flex;flex-direction:column;gap:26px">${ruleCards}${noteBox}</div>`;
 }
 
+// ป้าย "มีต่อหน้าถัดไป" มุมขวาล่าง (แสดงเฉพาะหน้าที่ยังไม่ใช่หน้าสุดท้ายของหัวข้อ)
+function renderNextPageTag(page, topic){
+  const pageIndex = topic.pages.indexOf(page);
+  return pageIndex < topic.pages.length - 1 ? '<button type="button" class="faqNext" data-next>มีต่อหน้าถัดไป →</button>' : '';
+}
+
 // หน้า FAQ: รวมหลายคำถามในหน้าเดียว แสดงคำตอบครบทุกข้อ (คำตอบเป็นตัวแดง) เลขข้อต่อจากหน้าก่อน + ป้ายมีต่อหน้าถัดไป
 function renderFaqPage(page, topic){
   const pageIndex = topic.pages.indexOf(page);
   const firstNumber = topic.pages.slice(0, pageIndex).reduce((sum, p) => sum + (p.type === 'faq' ? p.items.length : 0), 0);
-  const hasNextPage = pageIndex < topic.pages.length - 1;
   const faqRows = page.items.map((item, i) => `<div class="faqItem">
       <div class="faqQ"><span class="n">${String(firstNumber + i + 1).padStart(2, '0')}</span><span class="qt">${formatRichText(item.q)}</span></div>
       <div class="faqA">${formatRichText(item.a)}</div></div>`).join('');
@@ -758,7 +764,7 @@ function renderFaqPage(page, topic){
   <div class="card q" style="top:200px;height:150px;gap:0">
     <div class="en">FAQ</div><div class="th">คำถามที่พบบ่อย</div></div>
   <div class="abs" style="left:60px;top:375px;width:960px;display:flex;flex-direction:column;gap:16px">${faqRows}</div>
-  ${hasNextPage ? '<button type="button" class="faqNext" data-next>มีต่อหน้าถัดไป →</button>' : ''}`;
+  ${renderNextPageTag(page, topic)}`;
 }
 
 const PAGE_RENDERERS = { faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
