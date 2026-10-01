@@ -86,7 +86,7 @@ const TOPICS = [
     ],
   },
 
-  /* ───────── หัวข้อ 2: รอบจ่ายเงินเดือน ───────── */
+  /* ───────── หัวข้อ 2: รอบจ่ายเงินเดือน & ค่าคอมมิชชั่น ───────── */
   {
     id: 'payroll',                       // ชื่อลิงก์ภาษาอังกฤษ (ลิงก์ตรง = .../#payroll)
     code: 'PAY',
@@ -106,7 +106,7 @@ const TOPICS = [
         stamp: ['PAID', 'ทุกวันที่ 1'] },
 
       { type: 'range',
-        question: 'เงินเดือน', sub: 'นับวันทำงานรอบไหน',
+        question: 'เงินเดือน', sub: 'นับวันทำงานรอบแบบไหน',
         cardTitle: 'รอบเงินเดือน', tag: '21 → 20',
         from: '21/8', to: '20/9', caption: 'นับวันทำงาน',
         exampleTitle: 'ตัวอย่าง', workText: 'ทำงาน', payText: 'ได้เงินวันที่', pay: '1/10',
@@ -115,10 +115,10 @@ const TOPICS = [
       { type: 'cards',
         question: 'COMMISSION?', sub: 'ค่าคอมนับรอบไหน',
         cards: [
-          { code: 'LTS', title: "LOTUS'S", rows: [
+          { code: 'LTS', title: "*LOTUS'S*", rows: [
             { name: 'ค่าคอมบาส', sub: 'สินค้าฝากขาย(เฉพาะบางสาขา)', pill: '1 → สิ้นเดือน' },
             { name: 'ค่าคอมเครดิต', pill: '1 → สิ้นเดือน' } ] },
-          { code: 'BGC', title: 'BIG C', rows: [
+          { code: 'BGC', title: '*BIG C*', rows: [
             { name: 'ค่าคอมบาส', sub: 'สินค้าฝากขาย', pill: '21 → 20', red: true },
             { name: 'ค่าคอมเครดิต', pill: '1 → สิ้นเดือน' } ] },
         ],
