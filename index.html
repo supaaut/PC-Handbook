@@ -208,26 +208,18 @@ const TOPICS = [
             note: 'ค่าคอมจะมีการอัปเดตรอบใหม่ทุกสิ้นเดือน' },
         ] },
 
-      /* 3.4 ลงทะเบียนรับประกัน + แจ้งซ่อม (รูปอยู่ใน images/ ชื่อ 3.4.2-1.jpg, 3.4.2-2.jpg) */
+      /* 3.4 รับประกันสินค้า & แจ้งซ่อม — หน้าเดียว (type: 'warranty')
+         register = ส่วน 3.4.1 ลงทะเบียน, repair = ส่วน 3.4.2 แจ้งซ่อม
+         images = รูปข้างขั้นตอน (อยู่ใน images/ แตะขยายได้), menu = เมนูที่ลูกค้าพิมพ์เลขใน LINE (เพิ่ม/ลบได้) */
       { id: 'warranty', code: 'WRT', title: 'รับประกันสินค้า & แจ้งซ่อม', desc: 'ลงทะเบียนรับประกัน · แจ้งซ่อม', ready: true,
         pages: [
-          { type: 'links', step: '3.4.1', title: 'ลงทะเบียนรับประกันสินค้า',
-            links: [
-              { tag: 'WARRANTY', title: 'ลงทะเบียนรับประกันสินค้า', url: 'https://www.inanothai.com/register/' },
-            ],
-            note: 'สินค้า *ลำโพง* และ *ทีวี* รับประกัน *1 ปี*\nยกเว้นทีวี *50 นิ้วขึ้นไป* รับประกัน *3 ปี*\n(ลูกค้าต้องลงทะเบียนรับประกันด้วย)' },
-          { type: 'photo', step: '3.4.2', title: 'แจ้งซ่อม: เพิ่มเพื่อน', image: 'images/3.4.2-1.jpg',
-            points: [
-              'ให้ลูกค้า add LINE *@inanos_service* เพื่อเพิ่มเพื่อน',
-            ] },
-          { type: 'photo', step: '3.4.2', title: 'แจ้งซ่อม: เลือกบริการ', image: 'images/3.4.2-2.jpg',
-            points: [
-              'พิมพ์ *1* แจ้งซ่อม',
-              'พิมพ์ *2* สอบถามการใช้งานสินค้า',
-              'พิมพ์ *3* สั่งซื้อรีโมท',
-              'พิมพ์ *4* ลงทะเบียนสินค้า',
-              'หลังลงทะเบียนแจ้งซ่อม ให้ทักแชทคุยรายละเอียดกับ *admin* เพื่อดำเนินการต่อไป',
-            ] },
+          { type: 'warranty', step: '3.4', title: 'รับประกันสินค้า & แจ้งซ่อม',
+            register: { step: '3.4.1', title: 'ลงทะเบียนรับประกันสินค้า', url: 'https://www.inanothai.com/register/',
+              note: 'สินค้า *ลำโพง* และ *ทีวี* รับประกัน *1 ปี*\nยกเว้นทีวี *50 นิ้วขึ้นไป* รับประกัน *3 ปี*\n(ลูกค้าต้องลงทะเบียนรับประกันด้วย)' },
+            repair: { step: '3.4.2', title: 'แจ้งซ่อม', lineId: '@inanos_service',
+              images: ['images/3.4.2-1.jpg', 'images/3.4.2-2.jpg'],
+              menu: ['แจ้งซ่อม', 'สอบถามการใช้งานสินค้า', 'สั่งซื้อรีโมท', 'ลงทะเบียนสินค้า'],
+              after: 'หลังลงทะเบียนแจ้งซ่อม ให้ทักแชทคุยรายละเอียดกับ *admin* เพื่อดำเนินการต่อไป' } },
         ] },
 
       /* 3.5 กฎการ check in-out (type: 'rules') */
@@ -448,6 +440,20 @@ const TOPICS = [
   .faqNext:focus-visible{outline:5px solid var(--ink);outline-offset:4px}
   .inLink{display:inline-block;color:var(--red);font-weight:700;text-decoration:none;border:3px solid var(--red);background:var(--red-soft);padding:2px 16px;margin:4px 0}
   .inLink:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+
+  /* ----- หน้า 3.4 รับประกัน & แจ้งซ่อม ----- */
+  .wrNote{border:4px solid var(--red);background:var(--red-soft);padding:16px 24px;font-size:32px;line-height:1.4}
+  .wrThumb{position:relative;padding:0;border:var(--bw) solid var(--ink);background:#fff;cursor:zoom-in;display:block;line-height:0}
+  .wrThumb img{display:block;width:auto;max-width:100%}
+  .wrThumb span{position:absolute;right:-8px;bottom:-12px;background:var(--red);color:var(--paper);font-size:22px;font-weight:600;padding:2px 10px;line-height:1.3;white-space:nowrap}
+  .wrThumb:focus-visible{outline:5px solid var(--red);outline-offset:4px}
+  .wrSteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:22px;font-size:34px;line-height:1.38;flex:1;min-width:0}
+  .wrSteps li{display:flex;gap:18px;align-items:flex-start}
+  .wrSteps .pn{flex:none;width:48px;height:48px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px;font-weight:700}
+  .wrLine{display:inline-block;font-family:var(--mono);font-weight:700;color:var(--red);border:3px solid var(--red);background:var(--red-soft);padding:2px 14px;line-height:1.3}
+  .wrMenus{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+  .wrMenu{display:flex;gap:14px;align-items:center;font-size:32px}
+  .wrMenu b{flex:none;width:42px;height:42px;background:var(--red);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px}
 </style>
 </head>
 <body>
@@ -786,7 +792,36 @@ function renderFaqPage(page, topic){
   ${renderNextPageTag(page, topic)}`;
 }
 
-const PAGE_RENDERERS = { faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
+// หน้า 3.4 รวม ลงทะเบียนรับประกัน + แจ้งซ่อม ในหน้าเดียว (กล่องบน-ล่าง · รูปเล็กข้างขั้นตอน แตะขยายได้)
+function renderWarrantyPage(page){
+  const reg = page.register, rep = page.repair;
+  const sectionHeader = (step, title) => `<div class="hd"><div class="id">${escapeHtml(step)}</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0;font-weight:700">${formatRichText(title)}</div></div>`;
+  const thumbnail = (src, height) => `<button type="button" class="wrThumb" data-zoom="${escapeHtml(src)}" aria-label="ขยายรูป"><img src="${escapeHtml(src)}" alt="" style="height:${height}px"><span>แตะขยาย</span></button>`;
+  const thumbHeights = [250, 420];
+  const menuList = rep.menu.map((m, i) => `<div class="wrMenu"><b>${i + 1}</b><span>${formatRichText(m)}</span></div>`).join('');
+  return `
+  <div class="card q" style="top:200px;height:170px;gap:0">
+    <div style="font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);letter-spacing:4px">${escapeHtml(page.step)}</div>
+    <div style="font-size:62px;font-weight:700;line-height:1.2">${formatRichText(page.title)}</div></div>
+  <div class="abs" style="left:60px;top:400px;width:960px;display:flex;flex-direction:column;gap:30px">
+    <div class="card" style="position:relative">${sectionHeader(reg.step, reg.title)}
+      <div style="padding:24px 36px 28px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
+          <div class="muted" style="font-family:var(--mono);font-size:24px;word-break:break-all;min-width:0">${escapeHtml(reg.url)}</div>
+          <a class="linkBtn" style="font-size:36px;padding:10px 32px;margin:0;flex:none" href="${escapeHtml(reg.url)}" target="_blank" rel="noopener">ลงทะเบียน ↗</a></div>
+        ${reg.note ? `<div class="wrNote">${formatRichText(reg.note)}</div>` : ''}</div></div>
+    <div class="card" style="position:relative">${sectionHeader(rep.step, rep.title)}
+      <div style="display:flex;gap:26px;padding:26px 32px 30px">
+        <div style="display:flex;flex-direction:column;gap:18px;flex:none">${(rep.images || []).map((src, i) => thumbnail(src, thumbHeights[i] || 300)).join('')}</div>
+        <ol class="wrSteps">
+          <li><span class="pn">1</span><span>ให้ลูกค้า add LINE <span class="wrLine">${escapeHtml(rep.lineId)}</span> เพื่อเพิ่มเพื่อน</span></li>
+          <li><span class="pn">2</span><span>พิมพ์เลขบริการที่ต้องการ<div class="wrMenus">${menuList}</div></span></li>
+          <li><span class="pn">3</span><span>${formatRichText(rep.after)}</span></li>
+        </ol></div></div>
+  </div>`;
+}
+
+const PAGE_RENDERERS = { warranty: renderWarrantyPage, faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
   cards: renderCardsPage, timeline: renderTimelinePage, table: renderTablePage };
 
 /* ================= หน้าสารบัญ ================= */
