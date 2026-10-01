@@ -15,6 +15,7 @@
    ║  • แก้ได้เฉพาะข้อความที่อยู่ใน '...' เท่านั้น อย่าลบเครื่องหมาย ' , { } [ ] ║
    ║  • *ข้อความ*   = ตัวหนาสีแดง                                         ║
    ║  • \n          = ขึ้นบรรทัดใหม่                                       ║
+   ║  • [ข้อความ](#checkin-2) = ปุ่มแตะเพื่อเปิดหน้าอื่นในคู่มือ              ║
    ║  • วันที่ เขียนแบบ 'วัน/เดือน' เช่น '21/8' (แถบในกราฟจะขยับตามให้เอง)   ║
    ║  • คำที่มี ' อยู่ข้างใน เช่น Lotus's ให้ใช้ "..." ครอบแทน                ║
    ║  • หัวข้อที่ยังไม่พร้อม ใส่ ready: false → จะขึ้นป้าย "เร็ว ๆ นี้"         ║
@@ -274,7 +275,7 @@ const TOPICS = [
         { q: 'สต็อกสินค้าฝากขายหาย หักเงินอย่างไร?',
           a: 'หักตาม *ราคาโปรโมชั่น* ของรุ่นนั้น ในรอบจ่ายถัดไป เช่น หายวันที่ *14 ส.ค.* หักในรอบจ่าย *1 ก.ย.*\nยกเว้นสินค้ามูลค่าสูงมาก จะทยอยหัก' },
         { q: 'ลืมรหัสผ่าน หรือเปลี่ยนมือถือ เข้า Mobile-TA ไม่ได้ ต้องทำอย่างไร?',
-          a: 'ให้ย้อนไปดูหัวข้อ *วิธี check in-out ทำงาน* ขั้นที่ 2' },
+          a: 'ให้ย้อนไปดูหัวข้อ [วิธี check in-out ทำงาน ขั้นที่ 2](#checkin-2)' },
         { q: 'เปลี่ยนเบอร์โทร อีเมล เลขบัญชีธนาคาร หรือวันหยุดประจำสัปดาห์ ต้องแจ้งใคร?',
           a: 'แจ้ง *พี่อ๊อฟ* และ *เซลล์* เพื่อรับทราบการเปลี่ยนแปลง' },
       ] },
@@ -426,6 +427,8 @@ const TOPICS = [
   .faqNext{position:absolute;right:60px;top:1790px;background:var(--red);color:var(--paper);font-size:40px;font-weight:700;
     padding:12px 30px;border:var(--bw) solid var(--ink);transform:rotate(-3deg);box-shadow:0 8px 0 -3px rgba(43,40,37,.18);white-space:nowrap;font-family:var(--thai);cursor:pointer}
   .faqNext:focus-visible{outline:5px solid var(--ink);outline-offset:4px}
+  .inLink{display:inline-block;color:var(--red);font-weight:700;text-decoration:none;border:3px solid var(--red);background:var(--red-soft);padding:2px 16px;margin:4px 0}
+  .inLink:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
 </style>
 </head>
 <body>
@@ -457,7 +460,7 @@ const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 // กันอักขระพิเศษ HTML
 function escapeHtml(text){ return String(text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 // แปลง *ข้อความ* เป็นตัวแดง และ \n เป็นขึ้นบรรทัด
-function formatRichText(text){ return escapeHtml(text).replace(/\[\[([^\]]+)\]\]/g,'<span style="font-size:1.7em;font-weight:700;line-height:0;margin:0 -.04em">$1</span>').replace(/\*([^*]+)\*/g,'<b class="red">$1</b>').replace(/\n/g,'<br>'); }
+function formatRichText(text){ return escapeHtml(text).replace(/\[([^\]]+)\]\((#[A-Za-z0-9_-]+)\)/g,'<a class="inLink" href="$2">$1 →</a>').replace(/\[\[([^\]]+)\]\]/g,'<span style="font-size:1.7em;font-weight:700;line-height:0;margin:0 -.04em">$1</span>').replace(/\*([^*]+)\*/g,'<b class="red">$1</b>').replace(/\n/g,'<br>'); }
 // อ่านวันที่แบบ '21/8'
 function parseDayMonth(text){ const [d, m] = String(text).split('/').map(Number); return { d, m }; }
 // แสดงวันที่เป็น '21 ส.ค.'
