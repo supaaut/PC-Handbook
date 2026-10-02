@@ -351,11 +351,16 @@ const TOPICS = [
 <style>
   /* Layout: หน้ากระดาษแนวตั้ง 1080×1920 ย่อ/ขยายให้พอดีจอ + แถบปุ่มกระดาษด้านล่าง (ธีมเดียวตั้งใจ ไม่มีโหมดมืด) */
   :root{
-    --bg:#E8E4DA; --dot:#CFC8BA; --paper:#F7F4ED; --ink:#2B2825;
-    --muted:#8A8377; --faint:#D9D3C6; --red:#CF3B2B; --red-soft:#F3D9D3;
+    /* ธีม: กระดาษครีม-แดง ขอบเข้ม มุมมน (แก้สีทั้งเล่มได้ที่นี่) */
+    --bg:#ECE8DF; --dot:#D9D3C6; --paper:#FAF8F2; --ink:#2F2C28;
+    --muted:#857E73; --faint:#DDD7CA; --red:#CB3A2B; --red-soft:#F6DED8;
     --mono:'IBM Plex Mono','IBM Plex Sans Thai Looped',ui-monospace,Menlo,monospace;
     --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai','Leelawadee UI',Tahoma,sans-serif;
-    --bw:3px;
+    --bw:2px;                                   /* ความหนาเส้นขอบ */
+    --line:var(--ink);                          /* สีเส้นขอบ */
+    --shadow:0 8px 0 -3px rgba(47,44,40,.10);   /* เงาใต้การ์ด */
+    --nb:3px;                                   /* ความหนากรอบกล่องหมายเหตุ */
+    --r:20px; --r2:14px;                        /* มุมมน: การ์ด / กล่องหมายเหตุ */
     color-scheme:light;
   }
   html,body{height:100%;touch-action:manipulation}   /* manipulation = ถ่างนิ้วซูมได้ แต่ไม่ซูมเมื่อแตะ 2 ครั้ง */
@@ -374,9 +379,9 @@ const TOPICS = [
 
   /* ----- แถบปุ่มล่าง ----- */
   #nav{flex:none;display:flex;align-items:center;gap:8px;background:var(--paper);
-    border-top:2px solid var(--ink);padding:10px max(16px, calc((100% - 720px) / 2)) calc(10px + env(safe-area-inset-bottom,0px))}
+    border-top:2px solid var(--line);padding:10px max(16px, calc((100% - 720px) / 2)) calc(10px + env(safe-area-inset-bottom,0px))}
   .nb{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;min-width:46px;padding:0 14px;
-    background:var(--paper);border:2px solid var(--ink);font-family:var(--thai);font-size:15px;font-weight:600;cursor:pointer}
+    background:var(--paper);border:2px solid var(--line);font-family:var(--thai);font-size:15px;font-weight:600;cursor:pointer}
   .nb:hover{background:var(--bg)}
   .nb.primary{background:var(--ink);color:var(--paper)}
   .nb.primary:hover{background:#403b36}
@@ -389,11 +394,11 @@ const TOPICS = [
 
   /* ----- ชิ้นส่วนกระดาษ (หน่วยเป็น px บนกระดาษ 1080 กว้าง) ----- */
   .abs{position:absolute}
-  .card{position:absolute;background:var(--paper);border:var(--bw) solid var(--ink);box-shadow:0 10px 0 -4px rgba(43,40,37,.10)}
-  .hd{display:flex;align-items:stretch;height:72px;border-bottom:var(--bw) solid var(--ink);
+  .card{position:absolute;background:var(--paper);border:var(--bw) solid var(--line);box-shadow:var(--shadow)}
+  .hd{display:flex;align-items:stretch;height:72px;border-bottom:var(--bw) solid var(--line);
     font-family:var(--mono);font-size:30px;letter-spacing:2px;text-transform:uppercase}
   .hd>div{display:flex;align-items:center;padding:0 22px;white-space:nowrap}
-  .hd .id{border-right:var(--bw) solid var(--ink);font-weight:600}
+  .hd .id{border-right:var(--bw) solid var(--line);font-weight:600}
   .hd .ttl{flex:1;overflow:hidden}
   .hd .tag{color:var(--red);font-weight:600}
   .hd .tag.th{font-family:var(--thai);letter-spacing:0;font-size:36px;font-weight:700}
@@ -401,16 +406,16 @@ const TOPICS = [
   .q .en{font-family:var(--mono);font-weight:700;font-size:70px;letter-spacing:12px;line-height:1.1}
   .q .en.thai{font-family:var(--thai);letter-spacing:4px;font-size:76px;line-height:1.15}
   .q .th{font-size:38px;color:var(--muted)}
-  .slip{position:absolute;background:var(--paper);border:var(--bw) solid var(--ink);padding:18px 30px;font-size:52px;
+  .slip{position:absolute;background:var(--paper);border:var(--bw) solid var(--line);padding:18px 30px;font-size:52px;
     display:flex;align-items:center;gap:24px;white-space:nowrap}
-  .box{width:44px;height:44px;border:var(--bw) solid var(--ink);flex:none;position:relative;background:var(--paper)}
+  .box{width:44px;height:44px;border:var(--bw) solid var(--line);flex:none;position:relative;background:var(--paper)}
   .box .tick{position:absolute;left:-4px;top:-12px;width:54px;height:54px;overflow:visible}
   .tick path{fill:none;stroke:var(--red);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
   .stamp{position:absolute;color:var(--red);border:7px double var(--red);padding:14px 34px 12px;text-align:center;
     font-family:var(--mono);background:rgba(247,244,237,.55);mix-blend-mode:multiply;white-space:nowrap}
   .stamp .big{font-size:84px;font-weight:700;letter-spacing:8px;line-height:1}
   .stamp .sm{font-family:var(--thai);font-size:38px;font-weight:600;letter-spacing:2px;margin-top:6px}
-  .pill{font-family:var(--mono);font-size:36px;font-weight:600;border:var(--bw) solid var(--ink);padding:6px 20px;white-space:nowrap}
+  .pill{font-family:var(--mono);font-size:36px;font-weight:600;border:var(--bw) solid var(--line);padding:6px 20px;white-space:nowrap}
   .pill.red{border-color:var(--red);color:var(--red)}
   .muted{color:var(--muted)} .red{color:var(--red)}
   b.red{font-weight:700}
@@ -419,7 +424,7 @@ const TOPICS = [
   .rowlab{position:absolute;left:40px;display:flex;align-items:baseline;gap:22px;white-space:nowrap}
   .rowlab .n{font-size:46px;font-weight:700;background:var(--paper);padding-right:6px}
   .rowlab .d{font-size:34px;font-weight:600;background:var(--paper)}
-  .bar{position:absolute;height:58px;border:var(--bw) solid var(--ink);transform-origin:left center}
+  .bar{position:absolute;height:58px;border:var(--bw) solid var(--line);transform-origin:left center}
   .bar.dark{background:var(--ink)}
   .bar.red{background:var(--red);border-color:var(--red)}
   .bar.dashed{background:var(--red-soft);border:4px dashed var(--red)}
@@ -434,7 +439,7 @@ const TOPICS = [
   .crow .nm{font-size:54px;font-weight:700}
   table.sum{border-collapse:collapse;width:100%;font-size:38px}
   table.sum td{border-bottom:2px solid var(--faint);padding:22px 20px;vertical-align:middle;line-height:1.3}
-  table.sum tr.h td{font-family:var(--mono);font-size:32px;font-weight:700;letter-spacing:2px;border-bottom:var(--bw) solid var(--ink);padding:18px 20px}
+  table.sum tr.h td{font-family:var(--mono);font-size:32px;font-weight:700;letter-spacing:2px;border-bottom:var(--bw) solid var(--line);padding:18px 20px}
   table.sum td.l{font-weight:700;width:300px}
   table.sum tr:last-child td{border-bottom:none}
   .strike{position:absolute;left:-10px;top:50%;height:6px;background:var(--red);transform-origin:left center}
@@ -448,19 +453,19 @@ const TOPICS = [
   #zoom img{width:100%;max-width:720px;height:auto;border:3px solid var(--paper);background:#fff}
   #zoomClose{position:sticky;top:0;align-self:flex-end;margin-bottom:10px;min-height:46px;padding:0 18px;background:var(--paper);color:var(--ink);
     border:2px solid var(--ink);font-family:var(--thai);font-size:16px;font-weight:600;cursor:pointer;z-index:1}
-  .shot{max-width:100%;max-height:100%;border:var(--bw) solid var(--ink);background:#fff;box-shadow:0 12px 0 -4px rgba(43,40,37,.12)}
+  .shot{max-width:100%;max-height:100%;border:var(--bw) solid var(--line);background:#fff;box-shadow:0 12px 0 -4px rgba(43,40,37,.12)}
   .points{list-style:none;margin:0;padding:24px 40px 30px;display:flex;flex-direction:column;gap:18px;font-size:40px;line-height:1.35}
   .points li{display:flex;gap:22px;align-items:flex-start}
-  .points .pn{flex:none;width:54px;height:54px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;
+  .points .pn{flex:none;width:54px;height:54px;border:var(--bw) solid var(--line);display:flex;align-items:center;justify-content:center;
     font-family:var(--mono);font-size:30px;font-weight:700;margin-top:0}
 
   .badge{font-size:28px;font-weight:700;color:var(--red);border:3px solid var(--red);padding:2px 12px;background:var(--paper);align-self:center}
-  .linkBtn{align-self:flex-start;margin-top:8px;background:var(--red);color:var(--paper);text-decoration:none;font-size:40px;font-weight:700;padding:14px 40px;border:var(--bw) solid var(--ink)}
+  .linkBtn{align-self:flex-start;margin-top:8px;background:var(--red);color:var(--paper);text-decoration:none;font-size:40px;font-weight:700;padding:14px 40px;border:var(--bw) solid var(--line)}
   .linkBtn:focus-visible{outline:5px solid var(--ink);outline-offset:4px}
   /* ----- หน้าสารบัญ ----- */
-  .topic{position:absolute;left:60px;width:960px;height:210px;background:var(--paper);border:var(--bw) solid var(--ink);
-    display:flex;align-items:stretch;text-align:left;padding:0;cursor:pointer;box-shadow:0 10px 0 -4px rgba(43,40,37,.10)}
-  .topic .no{width:140px;flex:none;border-right:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;
+  .topic{position:absolute;left:60px;width:960px;height:210px;background:var(--paper);border:var(--bw) solid var(--line);
+    display:flex;align-items:stretch;text-align:left;padding:0;cursor:pointer;box-shadow:var(--shadow)}
+  .topic .no{width:140px;flex:none;border-right:var(--bw) solid var(--line);display:flex;align-items:center;justify-content:center;
     font-family:var(--mono);font-size:72px;font-weight:700}
   .topic .bd{flex:1;min-width:0;padding:20px 32px;display:flex;flex-direction:column;justify-content:center;gap:8px}
   .topic .tt{font-size:46px;font-weight:700;line-height:1.2}
@@ -468,35 +473,47 @@ const TOPICS = [
   .topic .go{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--red);letter-spacing:1px}
   .topic.soon{cursor:default}
   .topic.soon .no,.topic.soon .tt{color:var(--muted)}
-  .topic:not(.soon):hover{background:#fbf9f4}
+  .topic:not(.soon):hover{background:#FDFCF8}
   .soonStamp{position:absolute;right:26px;top:-30px;color:var(--red);border:5px double var(--red);padding:4px 20px;
     font-size:32px;font-weight:700;transform:rotate(-6deg);mix-blend-mode:multiply;background:rgba(247,244,237,.6)}
 
   /* ----- หน้า FAQ ----- */
-  .faqItem{background:var(--paper);border:var(--bw) solid var(--ink);box-shadow:0 10px 0 -4px rgba(43,40,37,.10);padding:14px 26px 16px}
+  .faqItem{background:var(--paper);border:var(--bw) solid var(--line);box-shadow:var(--shadow);padding:14px 26px 16px}
   .faqQ{display:flex;align-items:flex-start;gap:22px}
-  .faqQ .n{flex:none;width:52px;height:52px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:28px;font-weight:700}
+  .faqQ .n{flex:none;width:52px;height:52px;border:var(--bw) solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:28px;font-weight:700}
   .faqQ .qt{flex:1;min-width:0;font-size:37px;font-weight:700;line-height:1.28;padding-top:2px}
   .faqA{margin:8px 0 0 74px;padding-top:8px;border-top:2px dashed var(--faint);font-size:33px;line-height:1.38;color:var(--red)}
   .faqNext{position:absolute;right:60px;top:1790px;background:var(--red);color:var(--paper);font-size:40px;font-weight:700;
-    padding:12px 30px;border:var(--bw) solid var(--ink);transform:rotate(-3deg);box-shadow:0 8px 0 -3px rgba(43,40,37,.18);white-space:nowrap;font-family:var(--thai);cursor:pointer}
+    padding:12px 30px;border:var(--bw) solid var(--line);transform:rotate(-3deg);box-shadow:0 8px 0 -3px rgba(43,40,37,.18);white-space:nowrap;font-family:var(--thai);cursor:pointer}
   .faqNext:focus-visible{outline:5px solid var(--ink);outline-offset:4px}
   .inLink{display:inline-block;color:var(--red);font-weight:700;text-decoration:none;border:3px solid var(--red);background:var(--red-soft);padding:2px 16px;margin:4px 0}
   .inLink:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
 
   /* ----- หน้า 3.4 รับประกัน & แจ้งซ่อม ----- */
-  .wrNote{border:4px solid var(--red);background:var(--red-soft);padding:16px 24px;font-size:32px;line-height:1.4}
-  .wrThumb{position:relative;padding:0;border:var(--bw) solid var(--ink);background:#fff;cursor:zoom-in;display:block;line-height:0}
+  .wrNote{border:var(--nb) solid var(--red);border-radius:var(--r2);background:var(--red-soft);padding:16px 24px;font-size:32px;line-height:1.4}
+  .wrThumb{position:relative;padding:0;border:var(--bw) solid var(--line);background:#fff;cursor:zoom-in;display:block;line-height:0}
   .wrThumb img{display:block;width:auto;max-width:100%}
   .wrThumb span{position:absolute;right:-8px;bottom:-12px;background:var(--red);color:var(--paper);font-size:22px;font-weight:600;padding:2px 10px;line-height:1.3;white-space:nowrap}
   .wrThumb:focus-visible{outline:5px solid var(--red);outline-offset:4px}
   .wrSteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:22px;font-size:34px;line-height:1.38;flex:1;min-width:0}
   .wrSteps li{display:flex;gap:18px;align-items:flex-start}
-  .wrSteps .pn{flex:none;width:48px;height:48px;border:var(--bw) solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px;font-weight:700}
+  .wrSteps .pn{flex:none;width:48px;height:48px;border:var(--bw) solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px;font-weight:700}
   .wrLine{display:inline-block;font-family:var(--mono);font-weight:700;color:var(--red);border:3px solid var(--red);background:var(--red-soft);padding:2px 14px;line-height:1.3}
   .wrMenus{display:flex;flex-direction:column;gap:6px;margin-top:10px}
   .wrMenu{display:flex;gap:14px;align-items:center;font-size:32px}
   .wrMenu b{flex:none;width:42px;height:42px;background:var(--red);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px}
+
+  /* ----- มุมมน + การ์ดไม่เอียง ----- */
+  .card,.topic,.faqItem{border-radius:var(--r)}
+  .topic,.card{transform:none!important}
+  .bar.dark{border-color:var(--ink)}
+  .pill,.box,.badge,.points .pn,.faqQ .n,.wrSteps .pn,.wrMenu b,.wrLine,.inLink,.bar{border-radius:8px}
+  .linkBtn{border-radius:12px}
+  .faqNext{border-radius:12px;transform:rotate(-2deg)}
+  .zoomTag{border-radius:8px;transform:none}
+  .shot{border-radius:14px}
+  .wrThumb{border-radius:10px} .wrThumb img{border-radius:8px}
+  .nb{border-radius:10px}
 </style>
 </head>
 <body>
@@ -595,7 +612,7 @@ function renderHighlightPage(page){
       <div style="font-family:var(--mono);font-size:380px;font-weight:700;line-height:1">${escapeHtml(page.big)}</div>
       <svg class="abs" style="left:90px;top:40px" width="420" height="480" viewBox="0 0 420 480">
         <path data-a="draw" data-t="1.5" d="M210 30 C 360 30, 400 150, 395 250 C 390 380, 300 455, 200 450 C 90 445, 25 360, 28 240 C 32 120, 110 40, 225 38"
-          fill="none" stroke="#CF3B2B" stroke-width="10" stroke-linecap="round"/></svg>
+          fill="none" style="stroke:var(--red)" stroke-width="10" stroke-linecap="round"/></svg>
     </div>
   </div>
   <div class="abs" data-a="card" data-t="2.4" style="left:0;width:1080px;top:1240px;text-align:center">
@@ -636,7 +653,7 @@ function renderRangePage(page){
     <div style="position:relative;height:482px">${chart}</div>
   </div>
   <div class="abs" data-a="card" data-t="4.2" style="left:510px;top:1060px;width:60px;height:110px">
-    <svg width="60" height="110"><path d="M30 5 V95 M8 72 L30 98 L52 72" fill="none" stroke="#2B2825" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <svg width="60" height="110"><path d="M30 5 V95 M8 72 L30 98 L52 72" fill="none" style="stroke:var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   <div class="card" data-a="card" data-t="4.5" style="left:60px;top:1180px;width:960px;height:300px">
     <div class="hd"><div class="id">PAY-01</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0">${formatRichText(page.exampleTitle)}</div></div>
     <div style="padding:30px 44px;display:flex;flex-direction:column;gap:14px">
@@ -781,7 +798,7 @@ function renderLinksPage(page, topic){
         <div class="muted" style="font-family:var(--mono);font-size:26px;word-break:break-all">${escapeHtml(link.url)}</div>
         <a class="linkBtn" href="${escapeHtml(link.url)}" target="_blank" rel="noopener">เปิดลิงก์ ↗</a>
       </div></div>`).join('');
-  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:4px solid var(--red);background:var(--red-soft);padding:24px 36px">
+  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:var(--nb) solid var(--red);border-radius:var(--r2);background:var(--red-soft);padding:24px 36px">
       <div style="font-family:var(--mono);font-size:30px;font-weight:700;color:var(--red);letter-spacing:2px">หมายเหตุ</div>
       <div style="font-size:42px;line-height:1.4;margin-top:6px">${formatRichText(page.note)}</div></div>` : '';
   return `
@@ -800,12 +817,12 @@ function renderRulesPage(page){
   const ruleCards = page.items.map(item => `<div class="card" style="position:relative;width:960px">
       <div class="hd" style="height:62px"><div class="id">RULE</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0;font-size:34px;font-weight:700">${formatRichText(item.tag)}</div></div>
       <div style="display:flex;align-items:stretch">
-        <div style="width:220px;flex:none;border-right:var(--bw) solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px">
+        <div style="width:220px;flex:none;border-right:var(--bw) solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px">
           <div style="font-family:var(--mono);font-size:84px;font-weight:700;line-height:1;color:var(--red)">${escapeHtml(item.stat)}</div>
           <div style="font-size:28px;font-weight:600;text-align:center;margin-top:6px">${formatRichText(item.unit)}</div></div>
         <div style="flex:1;min-width:0;padding:20px 30px;font-size:38px;line-height:1.35;display:flex;align-items:center"><div>${formatRichText(item.text)}</div></div>
       </div></div>`).join('');
-  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:4px solid var(--red);background:var(--red-soft);padding:20px 34px">
+  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:var(--nb) solid var(--red);border-radius:var(--r2);background:var(--red-soft);padding:20px 34px">
       <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red);letter-spacing:2px">สำคัญ</div>
       <div style="font-size:38px;line-height:1.4;margin-top:4px">${formatRichText(page.note)}</div></div>` : '';
   return `
