@@ -229,7 +229,7 @@ const TOPICS = [
             note: 'การลาทุกประเภทต้องได้รับความเห็นชอบจาก *เซลล์ต้นสังกัด* โดยแจ้งความประสงค์ผ่าน [Mobile-TA](#checkin-5)' },
         ] },
       /* 3.2 การลาออก (type: 'rules') */
-      { id: 'resign', code: 'RSG', title: 'การลาออก', desc: 'แจ้งล่วงหน้า 30 วัน · เช็คสต็อกก่อนออก', ready: true,
+      { id: 'resign', code: 'RSG', title: 'การลาออก', desc: 'แจ้งล่วงหน้า 30 วัน · เช็คสต็อก · เงินค้ำประกัน', ready: true,
         pages: [
           { type: 'rules', step: '3.2', title: 'การลาออก',
             items: [
@@ -238,6 +238,15 @@ const TOPICS = [
               { tag: 'เช็คสต็อกก่อนลาออก', stat: '✓', unit: 'ถ้ามีสินค้าฝากขาย',
                 text: 'ถ้าสาขามี *สินค้าฝากขาย* ต้อง *เช็คสต็อกก่อนลาออก* เพื่อไม่ให้เกิดข้อพิพาทเรื่องหักเงิน เมื่อเช็คเกอร์เข้าเช็คภายหลัง' },
             ] },
+          /* หน้าเงินค้ำประกัน (type: 'deposit') — ยึดวันจ่ายเงินงวดสุดท้าย → เงินค้ำเข้าเดือนถัดไป
+             rule = วันจ่ายงวดสุดท้าย / วันเงินค้ำเข้า (ตารางใช้แค่เลขวัน 1 และ 6), cases = กรณีตัวอย่าง (เพิ่ม/ลบได้) */
+          { type: 'deposit', step: '3.2', title: 'เงินค้ำประกันได้คืนวันไหน',
+            rule: { lastPay: '1/8', refund: '6/9' },
+            cases: [
+              { name: 'กรณีทั่วไป', detail: 'ออกเดือน *มี.ค.*', lastPay: '1/5', refund: '6/6' },
+              { name: 'กรณีคร่อมรอบ', detail: 'ออกเดือน *มี.ค.* แต่ทำงานถึงช่วง *21–31 มี.ค.*\nจะมี *ค่าคอมบาส* งวด 21–31 มี.ค. จ่ายเพิ่มอีก 1 งวด', lastPay: '1/6', refund: '6/7' },
+            ],
+            note: 'เงินค้ำเข้า *ภายในวันนั้น* แต่ *ไม่ใช่ช่วงเช้า* เหมือนเงินเดือนปกติ' },
         ] },
 
       /* 3.3 หน้าลิงก์ (type: 'links') — แก้ลิงก์ที่ url: ได้เลย */
@@ -339,7 +348,7 @@ const TOPICS = [
         { q: 'ทำไมเงินงวดสุดท้ายยังมีรายการหัก แม้จะลาออกไปแล้ว?',
           a: 'เพราะยอดนี้หักจาก *งวดเงินค่าคอม* ไม่ใช่เงินเดือน เงินงวดสุดท้ายที่จ่ายคือค่าคอมของช่วงที่ยังทำงานอยู่' },
         { q: 'เงินค้ำประกันได้รับคืนวันไหน เมื่อออกจากงาน?',
-          a: 'ให้นับว่าทำงานถึงเดือนไหน เช่น ทำงานสิ้นสุดภายใน *ส.ค.* เงินค้ำจะจ่าย *วันที่ 6 พ.ย.* ภายในวัน แต่*ไม่ใช่ช่วงเช้าเหมือนเงินเดือนปกติ*' },
+          a: 'ดูว่า *เงินงวดสุดท้าย* จ่ายวันที่ 1 เดือนไหน เงินค้ำจะเข้า *วันที่ 6 ของเดือนถัดไป* ภายในวัน แต่ *ไม่ใช่ช่วงเช้าเหมือนเงินเดือนปกติ*\n[ดูตารางวันจ่ายเงินค้ำ](#resign-2)' },
         { q: 'ทำไมเงินค้ำถึงจ่ายล่าช้า?',
           a: 'เพราะบริษัทเป็น *ระบบเบิกเงินล่วงหน้า* พนักงานที่เบิกอาจมีค่าคอมและเงินเดือนไม่พอหักคืน จึงต้องรอดูเงินออกรอบสุดท้ายก่อน หลังจากนั้นใช้เวลา *35 วัน* ในการตรวจสอบทำเงินค้ำคืน' },
       ] },
@@ -514,6 +523,22 @@ const TOPICS = [
   .shot{border-radius:14px}
   .wrThumb{border-radius:10px} .wrThumb img{border-radius:8px}
   .nb{border-radius:10px}
+
+  /* ----- หน้าเงินค้ำประกัน ----- */
+  .dpGrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(6,auto);grid-auto-flow:column}
+  .dpCell{display:flex;align-items:center;gap:16px;padding:0 30px;height:84px;font-size:38px;border-bottom:2px solid var(--faint);white-space:nowrap}
+  .dpCell:nth-child(-n+6){border-right:2px solid var(--faint)}
+  .dpCell:nth-child(6),.dpCell:nth-child(12){border-bottom:0}
+  .dpCell .qm{width:130px;font-weight:600} .dpCell .ar{color:var(--muted);font-family:var(--mono)} .dpCell b{color:var(--red);font-weight:700}
+  .dpCell .ny{font-size:24px;color:var(--muted)}
+  .dpCase{padding:20px 34px 24px;border-bottom:2px solid var(--faint)} .dpCase:last-child{border-bottom:0}
+  .dpCase .nm{display:inline-block;font-size:28px;font-weight:700;color:var(--paper);background:var(--ink);padding:2px 16px;border-radius:8px}
+  .dpCase .dt{font-size:36px;line-height:1.4;margin-top:8px}
+  .dpCase .chips{display:flex;align-items:center;gap:16px;margin-top:14px}
+  .dpCase .chip{display:flex;align-items:baseline;gap:12px;border:var(--bw) solid var(--line);border-radius:10px;padding:6px 20px;font-size:30px;white-space:nowrap}
+  .dpCase .chip b{font-size:40px;font-weight:700}
+  .dpCase .chip.red{border-color:var(--red);background:var(--red-soft)} .dpCase .chip.red b{color:var(--red)}
+  .dpCase .ar{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red)}
 </style>
 </head>
 <body>
@@ -813,7 +838,7 @@ function renderLinksPage(page, topic){
 }
 
 // หน้ากฎเป็นข้อ ๆ: ตัวเลขเด่นด้านซ้าย + รายละเอียดด้านขวา + หมายเหตุท้ายหน้า
-function renderRulesPage(page){
+function renderRulesPage(page, topic){
   const ruleCards = page.items.map(item => `<div class="card" style="position:relative;width:960px">
       <div class="hd" style="height:62px"><div class="id">RULE</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0;font-size:34px;font-weight:700">${formatRichText(item.tag)}</div></div>
       <div style="display:flex;align-items:stretch">
@@ -829,7 +854,8 @@ function renderRulesPage(page){
   <div class="card q" style="top:230px;height:190px;gap:0">
     <div style="font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);letter-spacing:4px">${escapeHtml(page.step)}</div>
     <div style="font-size:70px;font-weight:700;line-height:1.2">${formatRichText(page.title)}</div></div>
-  <div class="abs" style="left:60px;top:460px;width:960px;display:flex;flex-direction:column;gap:26px">${ruleCards}${noteBox}</div>`;
+  <div class="abs" style="left:60px;top:460px;width:960px;display:flex;flex-direction:column;gap:26px">${ruleCards}${noteBox}</div>
+  ${renderNextPageTag(page, topic)}`;
 }
 
 // ป้าย "มีต่อหน้าถัดไป" มุมขวาล่าง (แสดงเฉพาะหน้าที่ยังไม่ใช่หน้าสุดท้ายของหัวข้อ)
@@ -881,7 +907,35 @@ function renderWarrantyPage(page){
   </div>`;
 }
 
-const PAGE_RENDERERS = { warranty: renderWarrantyPage, faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
+// หน้าเงินค้ำประกัน: ตาราง 12 เดือน (งวดสุดท้ายจ่ายวันไหน → เงินค้ำเข้าวันไหน) + กรณีตัวอย่าง
+function renderDepositPage(page){
+  const lastPayDay = parseDayMonth(page.rule.lastPay).d, refundDay = parseDayMonth(page.rule.refund).d;
+  const tableCells = Array.from({length: 12}, (_, i) => { const payMonth = i + 1, refundMonth = payMonth % 12 + 1;
+    return `<div class="dpCell"><span class="qm">${lastPayDay} ${TH_MONTHS[payMonth]}</span><span class="ar">→</span>
+      <b>${refundDay} ${TH_MONTHS[refundMonth]}</b>${payMonth === 12 ? '<span class="ny">ปีถัดไป</span>' : ''}</div>`; }).join('');
+  const caseRows = (page.cases || []).map(c => `<div class="dpCase">
+      <div class="nm">${formatRichText(c.name)}</div>
+      <div class="dt">${formatRichText(c.detail)}</div>
+      <div class="chips"><span class="chip"><span>งวดสุดท้ายจ่าย</span><b>${formatDayMonth(parseDayMonth(c.lastPay))}</b></span><span class="ar">→</span>
+        <span class="chip red"><span>เงินค้ำเข้า</span><b>${formatDayMonth(parseDayMonth(c.refund))}</b></span></div></div>`).join('');
+  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:var(--nb) solid var(--red);border-radius:var(--r2);background:var(--red-soft);padding:20px 34px">
+      <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red);letter-spacing:2px">หมายเหตุ</div>
+      <div style="font-size:38px;line-height:1.4;margin-top:4px">${formatRichText(page.note)}</div></div>` : '';
+  return `
+  <div class="card q" style="top:200px;height:170px;gap:0">
+    <div style="font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);letter-spacing:4px">${escapeHtml(page.step)}</div>
+    <div style="font-size:62px;font-weight:700;line-height:1.2">${formatRichText(page.title)}</div></div>
+  <div class="abs" style="left:60px;top:395px;width:960px;display:flex;flex-direction:column;gap:22px">
+    <div class="card" style="position:relative">
+      <div class="hd"><div class="id">TABLE</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0;font-weight:700">งวดสุดท้ายจ่ายวันไหน → เงินค้ำเข้าวันไหน</div></div>
+      <div class="dpGrid">${tableCells}</div></div>
+    ${caseRows ? `<div class="card" style="position:relative">
+      <div class="hd"><div class="id">EX</div><div class="ttl" style="font-family:var(--thai);letter-spacing:0;font-weight:700">ตัวอย่าง: งวดสุดท้ายของฉันคือวันไหน</div></div>${caseRows}</div>` : ''}
+    ${noteBox}
+  </div>`;
+}
+
+const PAGE_RENDERERS = { deposit: renderDepositPage, warranty: renderWarrantyPage, faq: renderFaqPage, rules: renderRulesPage, links: renderLinksPage, photo: renderPhotoPage, cover: renderCoverPage, highlight: renderHighlightPage, range: renderRangePage,
   cards: renderCardsPage, timeline: renderTimelinePage, table: renderTablePage };
 
 /* ================= หน้าสารบัญ ================= */
