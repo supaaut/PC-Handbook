@@ -244,7 +244,7 @@ const TOPICS = [
             rule: { lastPay: '1/8', refund: '6/9' },
             cases: [
               { name: 'กรณีทั่วไป', detail: 'ลาออกเดือน *มี.ค.*', lastPay: '1/5', refund: '6/6' },
-              { name: 'กรณีคร่อมรอบ', detail: 'ลาออกเดือน *มี.ค.* แต่ทำงานถึงช่วง *21–31 มี.ค.*\nจะมี *ค่าคอมบาส* งวด 21–31 มี.ค. จ่ายเพิ่มอีก 1 งวด*(ถ้ามี)*', lastPay: '1/6', refund: '6/7' },
+              { name: 'กรณีคร่อมรอบ', detail: 'ลาออกเดือน *มี.ค.* แต่ทำงานถึงช่วง *21–31 มี.ค.*\nจะมี *ค่าคอมบาส* งวด 21–31 มี.ค. จ่ายอีก 1 งวด *(ถ้ามี)*', lastPay: '1/6', refund: '6/7' },
             ],
             note: '*เงินค้ำเข้า ภายในวันนั้น แต่ ไม่ใช่ช่วงเช้า เหมือนเงินเดือนปกติ*' },
         ] },
@@ -543,6 +543,10 @@ const TOPICS = [
   .dpCase .chip b{font-size:40px;font-weight:700}
   .dpCase .chip.red{border-color:var(--red);background:var(--red-soft)} .dpCase .chip.red b{color:var(--red)}
   .dpCase .ar{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red)}
+  /* กล่องหมายเหตุของหน้าเงินค้ำ: พื้นเหลืองนวลให้เด่นกว่ากล่องหมายเหตุหน้าอื่น (เปลี่ยนสีได้ที่ background) */
+  .dpNote{box-sizing:border-box;width:960px;border:var(--bw) solid var(--ink);border-radius:var(--r2);background:#F7E2A0;padding:20px 34px}
+  .dpNote .lb{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--ink);letter-spacing:2px}
+  .dpNote .tx{font-size:38px;line-height:1.4;margin-top:4px}
 </style>
 </head>
 <body>
@@ -922,9 +926,9 @@ function renderDepositPage(page){
       <div class="dt">${formatRichText(c.detail)}</div>
       <div class="chips"><span class="chip"><span>งวดสุดท้ายจ่าย</span><b>${formatDayMonth(parseDayMonth(c.lastPay))}</b></span><span class="ar">→</span>
         <span class="chip red"><span>เงินค้ำเข้า</span><b>${formatDayMonth(parseDayMonth(c.refund))}</b></span></div></div>`).join('');
-  const noteBox = page.note ? `<div style="box-sizing:border-box;width:960px;border:var(--nb) solid var(--red);border-radius:var(--r2);background:var(--red-soft);padding:20px 34px">
-      <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red);letter-spacing:2px">หมายเหตุ</div>
-      <div style="font-size:38px;line-height:1.4;margin-top:4px">${formatRichText(page.note)}</div></div>` : '';
+  const noteBox = page.note ? `<div class="dpNote">
+      <div class="lb">หมายเหตุ</div>
+      <div class="tx">${formatRichText(page.note)}</div></div>` : '';
   return `
   <div class="card q" style="top:200px;height:170px;gap:0">
     <div style="font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);letter-spacing:4px">${escapeHtml(page.step)}</div>
